@@ -13,26 +13,32 @@ export function usePresets() {
     })
   }, [])
 
-  const savePreset = useCallback(async (name: string, values: PresetValues) => {
-    const newPreset: Preset = {
-      id: Date.now().toString(),
-      name,
-      sets: values.sets,
-      workTime: values.workTime,
-      restTime: values.restTime,
-      createdAt: Date.now(),
-    }
-    const newPresets = [...presets, newPreset]
-    setPresets(newPresets)
-    await persistPresetsToStorage(newPresets)
-    return newPreset
-  }, [presets])
+  const savePreset = useCallback(
+    async (name: string, values: PresetValues) => {
+      const newPreset: Preset = {
+        id: Date.now().toString(),
+        name,
+        sets: values.sets,
+        workTime: values.workTime,
+        restTime: values.restTime,
+        createdAt: Date.now(),
+      }
+      const newPresets = [...presets, newPreset]
+      setPresets(newPresets)
+      await persistPresetsToStorage(newPresets)
+      return newPreset
+    },
+    [presets]
+  )
 
-  const deletePreset = useCallback(async (id: string) => {
-    const newPresets = presets.filter((p) => p.id !== id)
-    setPresets(newPresets)
-    await persistPresetsToStorage(newPresets)
-  }, [presets])
+  const deletePreset = useCallback(
+    async (id: string) => {
+      const newPresets = presets.filter((p) => p.id !== id)
+      setPresets(newPresets)
+      await persistPresetsToStorage(newPresets)
+    },
+    [presets]
+  )
 
   return {
     presets,

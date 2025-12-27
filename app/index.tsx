@@ -17,7 +17,9 @@ export default function Page() {
 
   const handleStart = () => {
     console.log('Starting with:', quickstartValues)
-    alert(`Starting: ${quickstartValues.sets} sets, ${quickstartValues.workTime}s work, ${quickstartValues.restTime}s rest`)
+    alert(
+      `Starting: ${quickstartValues.sets} sets, ${quickstartValues.workTime}s work, ${quickstartValues.restTime}s rest`
+    )
   }
 
   const handleSave = () => {
@@ -39,11 +41,7 @@ export default function Page() {
           onSave={handleSave}
         />
 
-        <Presets
-          presets={presets}
-          onSelect={setQuickstartValues}
-          onAdd={() => alert('Not implemented yet!')}
-        />
+        <Presets presets={presets} onSelect={setQuickstartValues} onAdd={() => alert('Not implemented yet!')} />
       </ScrollView>
 
       <SavePresetModal

@@ -44,11 +44,7 @@ export default function CounterButton({ type, amount, setter }: CounterButtonPro
   }, [])
 
   return (
-    <TouchableOpacity
-      style={styles.container}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-    >
+    <TouchableOpacity style={styles.container} onPressIn={handlePressIn} onPressOut={handlePressOut}>
       <Text style={styles.counterButton}>{content}</Text>
     </TouchableOpacity>
   )
