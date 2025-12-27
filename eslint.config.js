@@ -1,5 +1,5 @@
-const expoConfig = require("eslint-config-expo/flat");
-const prettierPlugin = require("eslint-plugin-prettier");
+const expoConfig = require('eslint-config-expo/flat')
+const prettierPlugin = require('eslint-plugin-prettier')
 
 module.exports = [
   ...expoConfig,
@@ -8,10 +8,10 @@ module.exports = [
       prettier: prettierPlugin,
     },
     rules: {
-      "prettier/prettier": "warn",
+      'prettier/prettier': 'warn',
     },
   },
   {
-    ignores: ["node_modules/", ".expo/", "dist/", "build/"],
+    ignores: ['node_modules/', '.expo/', 'dist/', 'build/'],
   },
-];
+]

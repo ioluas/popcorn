@@ -12,7 +12,9 @@
     "format": "prettier --write ."
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "expo": "~54.0.30",
+    "expo-font": "~14.0.10",
     "expo-linking": "~8.0.11",
     "expo-router": "~6.0.21",
     "expo-status-bar": "~3.0.9",
