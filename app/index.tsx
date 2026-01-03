@@ -1,23 +1,31 @@
 import { useState } from 'react'
 import { StyleSheet, ScrollView, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useRouter } from 'expo-router'
 import Quickstart, { PresetValues } from '@/components/Quickstart'
 import Presets from '@/components/Presets'
 import SavePresetModal from '@/components/SavePresetModal'
 import { usePresets } from '@/hooks/usePresets'
 
 export default function Page() {
+  const router = useRouter()
   const [presetValues, setPresetValues] = useState<PresetValues>({
     sets: 3,
-    workTime: 5 * 60,
-    restTime: 60,
+    workTime: 5,
+    restTime: 3,
   })
   const [showSaveModal, setShowSaveModal] = useState(false)
-  const { presets, savePreset } = usePresets()
+  const { presets, savePreset, deletePreset } = usePresets()
 
   const handleStart = () => {
-    console.log('Starting with:', presetValues)
-    alert(`Starting: ${presetValues.sets} sets, ${presetValues.workTime}s work, ${presetValues.restTime}s rest`)
+    router.push({
+      pathname: '/timer',
+      params: {
+        sets: String(presetValues.sets),
+        workTime: String(presetValues.workTime),
+        restTime: String(presetValues.restTime),
+      },
+    })
   }
 
   const handleSave = () => {
@@ -36,7 +44,7 @@ export default function Page() {
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <Presets presets={presets} onSelect={setPresetValues} onAdd={() => alert('Not implemented yet!')} />
+        <Presets presets={presets} onSelect={setPresetValues} onDelete={deletePreset} onAdd={() => alert('Not implemented yet!')} />
       </ScrollView>
 
       <SavePresetModal

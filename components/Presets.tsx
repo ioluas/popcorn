@@ -1,6 +1,7 @@
 import { JSX } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import Entypo from '@expo/vector-icons/Entypo'
+import { Ionicons } from '@expo/vector-icons'
 import { Preset } from '@/utils/General'
 import { PresetValues } from '@/components/Quickstart'
 import { formatTime } from '@/utils/General'
@@ -8,10 +9,11 @@ import { formatTime } from '@/utils/General'
 type PresetsProps = {
   presets: Preset[]
   onSelect: (values: PresetValues) => void
+  onDelete: (id: string) => void
   onAdd: () => void
 }
 
-export default function Presets({ presets, onSelect, onAdd }: PresetsProps): JSX.Element {
+export default function Presets({ presets, onSelect, onDelete, onAdd }: PresetsProps): JSX.Element {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -33,10 +35,17 @@ export default function Presets({ presets, onSelect, onAdd }: PresetsProps): JSX
               style={styles.item}
               onPress={() => onSelect({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
             >
-              <Text style={styles.itemName}>{preset.name}</Text>
-              <Text style={styles.itemDetails}>
-                {preset.sets} sets · {formatTime(preset.workTime)} work · {formatTime(preset.restTime)} rest
-              </Text>
+              <View style={styles.itemContent}>
+                <View>
+                  <Text style={styles.itemName}>{preset.name}</Text>
+                  <Text style={styles.itemDetails}>
+                    {preset.sets} sets · {formatTime(preset.workTime)} work · {formatTime(preset.restTime)} rest
+                  </Text>
+                </View>
+                <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(preset.id)}>
+                  <Ionicons name="trash-outline" size={20} color="#b0bec5" />
+                </TouchableOpacity>
+              </View>
             </TouchableOpacity>
           ))}
         </View>
@@ -87,6 +96,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#4a5c6a',
     borderRadius: 8,
     padding: 12,
+  },
+  itemContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deleteButton: {
+    padding: 8,
   },
   itemName: {
     fontSize: 16,

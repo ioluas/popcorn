@@ -1,11 +1,11 @@
-import { Dispatch, JSX, SetStateAction, useRef, useCallback } from 'react'
+import { JSX, useRef, useCallback } from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import * as Haptics from 'expo-haptics'
 
 type CounterButtonProps = {
   type: 'increment' | 'decrement'
   amount: number
-  setter: Dispatch<SetStateAction<number>>
+  setter: (updater: (prev: number) => number) => void
 }
 
 const INITIAL_DELAY = 300
