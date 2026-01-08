@@ -23,25 +23,16 @@ export default function Quickstart({ values, onChange, onStart, onSave }: Quicks
 
   const { sets, workTime, restTime } = values
 
-  const setSets = (updater: number | ((prev: number) => number)) => {
-    onChange((prev) => ({
-      ...prev,
-      sets: typeof updater === 'function' ? updater(prev.sets) : updater,
-    }))
+  const setSets = (updater: (prev: number) => number) => {
+    onChange((prev) => ({ ...prev, sets: updater(prev.sets) }))
   }
 
-  const setWorkTime = (updater: number | ((prev: number) => number)) => {
-    onChange((prev) => ({
-      ...prev,
-      workTime: typeof updater === 'function' ? updater(prev.workTime) : updater,
-    }))
+  const setWorkTime = (updater: (prev: number) => number) => {
+    onChange((prev) => ({ ...prev, workTime: updater(prev.workTime) }))
   }
 
-  const setRestTime = (updater: number | ((prev: number) => number)) => {
-    onChange((prev) => ({
-      ...prev,
-      restTime: typeof updater === 'function' ? updater(prev.restTime) : updater,
-    }))
+  const setRestTime = (updater: (prev: number) => number) => {
+    onChange((prev) => ({ ...prev, restTime: updater(prev.restTime) }))
   }
 
   return (
