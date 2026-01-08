@@ -17,13 +17,14 @@ export default function Page() {
   const [showSaveModal, setShowSaveModal] = useState(false)
   const { presets, savePreset, deletePreset } = usePresets()
 
-  const handleStart = () => {
+  const handleStart = (values?: PresetValues) => {
+    const { sets, workTime, restTime } = values ?? presetValues
     router.push({
       pathname: '/timer',
       params: {
-        sets: String(presetValues.sets),
-        workTime: String(presetValues.workTime),
-        restTime: String(presetValues.restTime),
+        sets: String(sets),
+        workTime: String(workTime),
+        restTime: String(restTime),
       },
     })
   }
@@ -40,11 +41,16 @@ export default function Page() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ padding: 16 }}>
-        <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
+        <Quickstart
+          values={presetValues}
+          onChange={setPresetValues}
+          onStart={() => handleStart()}
+          onSave={handleSave}
+        />
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
-        <Presets presets={presets} onSelect={setPresetValues} onDelete={deletePreset} onAdd={() => alert('Not implemented yet!')} />
+        <Presets presets={presets} onSelect={setPresetValues} onStart={handleStart} onDelete={deletePreset} />
       </ScrollView>
 
       <SavePresetModal

@@ -27,9 +27,6 @@
       "favicon": "./assets/favicon.png"
     },
     "scheme": "timer",
-    "plugins": [
-      "expo-router",
-      "expo-audio"
-    ]
+    "plugins": ["expo-router", "expo-audio"]
   }
 }

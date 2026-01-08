@@ -27,13 +27,15 @@ interface UseTimerReturn {
 }
 
 export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOptions): UseTimerReturn {
-  const [state, setState] = useState<TimerState>((): TimerState => ({
-    currentSet: 1,
-    totalSets: sets,
-    phase: 'work',
-    timeRemaining: workTime,
-    isPlaying: true,
-  }))
+  const [state, setState] = useState<TimerState>(
+    (): TimerState => ({
+      currentSet: 1,
+      totalSets: sets,
+      phase: 'work',
+      timeRemaining: workTime,
+      isPlaying: true,
+    })
+  )
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const onTransitionRef = useRef<((type: TransitionType) => void) | undefined>(onTransition)
