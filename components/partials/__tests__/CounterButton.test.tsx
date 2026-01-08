@@ -1,5 +1,5 @@
 import { render, fireEvent, act } from '@testing-library/react-native'
-import CounterButton from '../CounterButton'
+import CounterButton, { INITIAL_DELAY, RAPID_INTERVAL } from '../CounterButton'
 
 jest.mock('expo-haptics', () => ({
   impactAsync: jest.fn(),
@@ -138,18 +138,18 @@ describe('CounterButton', () => {
       // Initial press
       expect(value).toBe(11)
 
-      // Wait for initial delay (300ms) + some rapid intervals (100ms each)
+      // Wait for initial delay (INITIAL_DELAY) + some rapid intervals (RAPID_INTERVAL each)
       act(() => {
-        jest.advanceTimersByTime(300)
+        jest.advanceTimersByTime(INITIAL_DELAY)
       })
 
       act(() => {
-        jest.advanceTimersByTime(100)
+        jest.advanceTimersByTime(RAPID_INTERVAL)
       })
       expect(value).toBe(12)
 
       act(() => {
-        jest.advanceTimersByTime(100)
+        jest.advanceTimersByTime(RAPID_INTERVAL)
       })
       expect(value).toBe(13)
 

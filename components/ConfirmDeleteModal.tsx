@@ -17,10 +17,20 @@ export default function ConfirmDeleteModal({ visible, presetName, onConfirm, onC
           <Text style={styles.message}>Are you sure you want to delete &quot;{presetName}&quot;?</Text>
 
           <View style={styles.buttons}>
-            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+            <TouchableOpacity
+              style={styles.cancelButton}
+              onPress={onClose}
+              accessibilityRole="button"
+              accessibilityLabel="Cancel delete preset"
+            >
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.deleteButton} onPress={onConfirm}>
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={onConfirm}
+              accessibilityRole="button"
+              accessibilityLabel="Confirm delete preset"
+            >
               <Text style={styles.deleteButtonText}>Delete</Text>
             </TouchableOpacity>
           </View>

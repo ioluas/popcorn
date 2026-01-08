@@ -7,15 +7,14 @@ import { useTimer, TransitionType } from '@/hooks/useTimer'
 import { useSounds } from '@/hooks/useSounds'
 import { formatTime } from '@/utils/General'
 
-export default function TimerScreen(): JSX.Element | null {
-  const router = useRouter()
-  const params = useLocalSearchParams<{
-    sets?: string
-    workTime?: string
-    restTime?: string
-  }>()
+type TimerProps = {
+  sets: number
+  workTime: number
+  restTime: number
+}
 
-  // Hooks moved up to fix conditional call error
+function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
+  const router = useRouter()
   const { playBeep } = useSounds()
 
   const handleTransition = useCallback(
@@ -26,9 +25,9 @@ export default function TimerScreen(): JSX.Element | null {
   )
 
   const { state, toggle, reset } = useTimer({
-    sets: parseInt(params.sets ?? '0', 10),
-    workTime: parseInt(params.workTime ?? '0', 10),
-    restTime: parseInt(params.restTime ?? '0', 10),
+    sets,
+    workTime,
+    restTime,
     onTransition: handleTransition,
   })
 
@@ -40,17 +39,6 @@ export default function TimerScreen(): JSX.Element | null {
     }, 3000)
     return () => clearTimeout(timeout)
   }, [state.phase, router])
-
-  // Validate params - abort if missing
-  useEffect(() => {
-    if (!params.sets || !params.workTime || !params.restTime) {
-      router.back()
-    }
-  }, [params.sets, params.workTime, params.restTime, router])
-
-  if (!params.sets || !params.workTime || !params.restTime) {
-    return null
-  }
 
   const phaseLabel = state.phase === 'work' ? 'WORK' : state.phase === 'rest' ? 'REST' : 'Complete!'
   const phaseColor = state.phase === 'work' ? '#e8d44d' : state.phase === 'rest' ? '#5d9cec' : '#2ecc71'
@@ -79,6 +67,39 @@ export default function TimerScreen(): JSX.Element | null {
       <ExitButton onExit={() => router.back()} />
     </View>
   )
+}
+
+export default function TimerPage(): JSX.Element | null {
+  const router = useRouter()
+  const params = useLocalSearchParams<{
+    sets?: string
+    workTime?: string
+    restTime?: string
+  }>()
+
+  const [validatedParams, setValidatedParams] = useState<TimerProps | null>(null)
+
+  useEffect(() => {
+    const sets = parseInt(params.sets ?? '0', 10)
+    const workTime = parseInt(params.workTime ?? '0', 10)
+    const restTime = parseInt(params.restTime ?? '0', 10)
+
+    if (sets > 0 && workTime > 0 && restTime >= 0) {
+      setValidatedParams({ sets, workTime, restTime })
+    } else {
+      // Invalid params, navigate back
+      // Use requestAnimationFrame to ensure the navigation happens after the current render cycle
+      requestAnimationFrame(() => {
+        router.back()
+      })
+    }
+  }, [params.sets, params.workTime, params.restTime, router])
+
+  if (!validatedParams) {
+    return null // Or a loading spinner
+  }
+
+  return <TimerScreen {...validatedParams} />
 }
 
 type ExitButtonProps = {

@@ -86,7 +86,7 @@ describe('SavePresetModal', () => {
       fireEvent.changeText(input, 'Test Preset')
       fireEvent.press(getByText('Save'))
 
-      expect(input.props.value).toBe('')
+      expect(input).toHaveDisplayValue('')
     })
   })
 
@@ -106,7 +106,7 @@ describe('SavePresetModal', () => {
       fireEvent.changeText(input, 'Test Preset')
       fireEvent.press(getByText('Cancel'))
 
-      expect(input.props.value).toBe('')
+      expect(input).toHaveDisplayValue('')
     })
   })
 

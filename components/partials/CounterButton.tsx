@@ -8,8 +8,8 @@ type CounterButtonProps = {
   setter: (updater: (prev: number) => number) => void
 }
 
-const INITIAL_DELAY = 300
-const RAPID_INTERVAL = 100
+export const INITIAL_DELAY = 300
+export const RAPID_INTERVAL = 100
 
 export default function CounterButton({ type, amount, setter }: CounterButtonProps): JSX.Element {
   const content = `${type === 'increment' ? '+' : '-'}${amount > 1 ? amount : ''}`

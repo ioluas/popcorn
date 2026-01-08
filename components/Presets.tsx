@@ -22,6 +22,12 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
     }
   }
 
+  const getPresetValues = (preset: Preset): PresetValues => ({
+    sets: preset.sets,
+    workTime: preset.workTime,
+    restTime: preset.restTime,
+  })
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{presets.length === 0 ? 'No presets yet' : 'Presets'}</Text>
@@ -30,11 +36,7 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
       ) : (
         <View style={styles.list}>
           {presets.map((preset) => (
-            <TouchableOpacity
-              key={preset.id}
-              style={styles.item}
-              onPress={() => onSelect({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
-            >
+            <TouchableOpacity key={preset.id} style={styles.item} onPress={() => onSelect(getPresetValues(preset))}>
               <View style={styles.itemContent}>
                 <View style={styles.itemInfo}>
                   <Text style={styles.itemName}>{preset.name}</Text>
@@ -43,10 +45,7 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
                   </Text>
                 </View>
                 <View style={styles.itemActions}>
-                  <TouchableOpacity
-                    style={styles.playButton}
-                    onPress={() => onStart({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
-                  >
+                  <TouchableOpacity style={styles.playButton} onPress={() => onStart(getPresetValues(preset))}>
                     <Ionicons name="play" size={20} color="#b0bec5" />
                   </TouchableOpacity>
                   <TouchableOpacity style={styles.deleteButton} onPress={() => setPresetToDelete(preset)}>

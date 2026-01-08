@@ -11,8 +11,8 @@ export default function Page() {
   const router = useRouter()
   const [presetValues, setPresetValues] = useState<PresetValues>({
     sets: 3,
-    workTime: 5,
-    restTime: 3,
+    workTime: 60,
+    restTime: 30,
   })
   const [showSaveModal, setShowSaveModal] = useState(false)
   const { presets, savePreset, deletePreset } = usePresets()
