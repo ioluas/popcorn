@@ -36,14 +36,14 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
       ) : (
         <View style={styles.list}>
           {presets.map((preset) => (
-            <TouchableOpacity key={preset.id} style={styles.item} onPress={() => onSelect(getPresetValues(preset))}>
+            <View key={preset.id} style={styles.item}>
               <View style={styles.itemContent}>
-                <View style={styles.itemInfo}>
+                <TouchableOpacity style={styles.itemInfo} onPress={() => onSelect(getPresetValues(preset))}>
                   <Text style={styles.itemName}>{preset.name}</Text>
                   <Text style={styles.itemDetails}>
                     {preset.sets} sets · {formatTime(preset.workTime)} work · {formatTime(preset.restTime)} rest
                   </Text>
-                </View>
+                </TouchableOpacity>
                 <View style={styles.itemActions}>
                   <TouchableOpacity style={styles.playButton} onPress={() => onStart(getPresetValues(preset))}>
                     <Ionicons name="play" size={20} color="#b0bec5" />
@@ -53,7 +53,7 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
                   </TouchableOpacity>
                 </View>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       )}
