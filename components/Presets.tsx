@@ -45,10 +45,20 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.itemActions}>
-                  <TouchableOpacity style={styles.playButton} onPress={() => onStart(getPresetValues(preset))}>
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={() => onStart(getPresetValues(preset))}
+                    accessibilityLabel={`Start ${preset.name} preset`}
+                    accessibilityRole="button"
+                  >
                     <Ionicons name="play" size={20} color="#b0bec5" />
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.deleteButton} onPress={() => setPresetToDelete(preset)}>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => setPresetToDelete(preset)}
+                    accessibilityLabel={`Delete ${preset.name} preset`}
+                    accessibilityRole="button"
+                  >
                     <Ionicons name="trash-outline" size={20} color="#b0bec5" />
                   </TouchableOpacity>
                 </View>

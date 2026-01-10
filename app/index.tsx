@@ -41,12 +41,7 @@ export default function Page() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ padding: 16 }}>
-        <Quickstart
-          values={presetValues}
-          onChange={setPresetValues}
-          onStart={() => handleStart()}
-          onSave={handleSave}
-        />
+        <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
