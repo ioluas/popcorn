@@ -1,5 +1,5 @@
 import { JSX, useState, useEffect, useRef, useCallback } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import * as Haptics from 'expo-haptics'
@@ -7,31 +7,14 @@ import { useTimer, TransitionType } from '@/hooks/useTimer'
 import { useSounds } from '@/hooks/useSounds'
 import { formatTime } from '@/utils/General'
 
-export default function TimerScreen(): JSX.Element | null {
+type TimerProps = {
+  sets: number
+  workTime: number
+  restTime: number
+}
+
+function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
   const router = useRouter()
-  const params = useLocalSearchParams<{
-    sets?: string
-    workTime?: string
-    restTime?: string
-  }>()
-
-  // Validate params - abort if missing
-  useEffect(() => {
-    if (!params.sets || !params.workTime || !params.restTime) {
-      router.back()
-    }
-  }, [params.sets, params.workTime, params.restTime, router])
-
-  if (!params.sets || !params.workTime || !params.restTime) {
-    return null
-  }
-
-  const presetValues = {
-    sets: parseInt(params.sets, 10),
-    workTime: parseInt(params.workTime, 10),
-    restTime: parseInt(params.restTime, 10),
-  }
-
   const { playBeep } = useSounds()
 
   const handleTransition = useCallback(
@@ -42,12 +25,11 @@ export default function TimerScreen(): JSX.Element | null {
   )
 
   const { state, toggle, reset } = useTimer({
-    ...presetValues,
+    sets,
+    workTime,
+    restTime,
     onTransition: handleTransition,
   })
-
-  const [showExitButton, setShowExitButton] = useState(false)
-  const hideExitTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Auto-navigate home after completion
   useEffect(() => {
@@ -58,73 +40,115 @@ export default function TimerScreen(): JSX.Element | null {
     return () => clearTimeout(timeout)
   }, [state.phase, router])
 
-  const handleScreenTouch = () => {
-    setShowExitButton(true)
-    if (hideExitTimeoutRef.current) {
-      clearTimeout(hideExitTimeoutRef.current)
-    }
-    hideExitTimeoutRef.current = setTimeout(() => {
-      setShowExitButton(false)
-    }, 3000)
-  }
-
   const phaseLabel = state.phase === 'work' ? 'WORK' : state.phase === 'rest' ? 'REST' : 'Complete!'
   const phaseColor = state.phase === 'work' ? '#e8d44d' : state.phase === 'rest' ? '#5d9cec' : '#2ecc71'
 
   return (
-    <TouchableWithoutFeedback onPress={handleScreenTouch}>
-      <View style={styles.container}>
-        <Text style={[styles.phaseLabel, { color: phaseColor }]}>{phaseLabel}</Text>
+    <View style={styles.container}>
+      <Text style={[styles.phaseLabel, { color: phaseColor }]}>{phaseLabel}</Text>
 
-        <Text style={styles.countdown}>{formatTime(Math.max(0, state.timeRemaining))}</Text>
+      <Text style={styles.countdown}>{formatTime(Math.max(0, state.timeRemaining))}</Text>
 
-        <Text style={styles.progress}>
-          Set {state.currentSet} / {state.totalSets}
-        </Text>
+      <Text style={styles.progress}>
+        Set {state.currentSet} / {state.totalSets}
+      </Text>
 
-        {state.phase !== 'complete' && (
-          <View style={styles.controls}>
-            <TouchableOpacity onPress={toggle} style={styles.controlButton}>
-              <Ionicons name={state.isPlaying ? 'pause' : 'play'} size={32} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={reset} style={styles.controlButton}>
-              <Ionicons name="refresh" size={32} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        )}
+      {state.phase !== 'complete' && (
+        <View style={styles.controls}>
+          <TouchableOpacity onPress={toggle} style={styles.controlButton}>
+            <Ionicons name={state.isPlaying ? 'pause' : 'play'} size={32} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={reset} style={styles.controlButton}>
+            <Ionicons name="refresh" size={32} color="#fff" />
+          </TouchableOpacity>
+        </View>
+      )}
 
-        {showExitButton && <ExitButton onExit={() => router.back()} />}
-      </View>
-    </TouchableWithoutFeedback>
+      <ExitButton onExit={() => router.back()} />
+    </View>
   )
+}
+
+export default function TimerPage(): JSX.Element | null {
+  const router = useRouter()
+  const params = useLocalSearchParams<{
+    sets?: string
+    workTime?: string
+    restTime?: string
+  }>()
+
+  const [validatedParams, setValidatedParams] = useState<TimerProps | null>(null)
+
+  useEffect(() => {
+    const sets = parseInt(params.sets ?? '0', 10)
+    const workTime = parseInt(params.workTime ?? '0', 10)
+    const restTime = parseInt(params.restTime ?? '0', 10)
+
+    if (sets > 0 && workTime > 0 && restTime >= 0) {
+      setValidatedParams({ sets, workTime, restTime })
+    } else {
+      // Invalid params, navigate back
+      // Use requestAnimationFrame to ensure the navigation happens after the current render cycle
+      requestAnimationFrame(() => {
+        router.back()
+      })
+    }
+  }, [params.sets, params.workTime, params.restTime, router])
+
+  if (!validatedParams) {
+    return null // Or a loading spinner
+  }
+
+  return <TimerScreen {...validatedParams} />
 }
 
 type ExitButtonProps = {
   onExit: () => void
 }
 
+const HOLD_DURATION = 1000
+const TICK_INTERVAL = 50
+
 function ExitButton({ onExit }: ExitButtonProps): JSX.Element {
-  const [progress, setProgress] = useState(0)
+  const [progressMs, setProgressMs] = useState(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const HOLD_DURATION = 1000
-  const TICK_INTERVAL = 50
+  const onExitRef = useRef(onExit)
+  onExitRef.current = onExit
 
   useEffect(() => {
-    if (progress >= 1) {
-      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
-      onExit()
+    if (progressMs < HOLD_DURATION) return
+
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success)
+    // Small delay to let UI render 100% before exiting
+    const timeout = setTimeout(() => onExitRef.current(), 50)
+    return () => clearTimeout(timeout)
+  }, [progressMs])
+
+  // Cleanup interval on unmount
+  useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
     }
-  }, [progress, onExit])
+  }, [])
 
   const handlePressIn = () => {
+    // Clear any existing interval to prevent duplicates
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+      intervalRef.current = null
+    }
+    setProgressMs(0)
+
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
 
     intervalRef.current = setInterval(() => {
-      setProgress((prev) => {
-        const next = prev + TICK_INTERVAL / HOLD_DURATION
-        if (next >= 1) {
+      setProgressMs((prev) => {
+        const next = prev + TICK_INTERVAL
+        if (next >= HOLD_DURATION) {
           if (intervalRef.current) clearInterval(intervalRef.current)
-          return 1
+          return HOLD_DURATION
         }
         return next
       })
@@ -136,16 +160,13 @@ function ExitButton({ onExit }: ExitButtonProps): JSX.Element {
       clearInterval(intervalRef.current)
       intervalRef.current = null
     }
-    setProgress(0)
+    setProgressMs(0)
   }
 
+  const progress = progressMs / HOLD_DURATION
+
   return (
-    <TouchableOpacity
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-      style={styles.exitButton}
-      activeOpacity={1}
-    >
+    <TouchableOpacity onPressIn={handlePressIn} onPressOut={handlePressOut} style={styles.exitButton} activeOpacity={1}>
       <View style={[styles.exitProgress, { width: `${progress * 100}%` }]} />
       <Text style={styles.exitButtonText}>Hold to Exit</Text>
     </TouchableOpacity>
@@ -193,8 +214,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 48,
     backgroundColor: '#4a5c6a',
-    paddingVertical: 16,
-    paddingHorizontal: 32,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -209,5 +228,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
+    paddingVertical: 16,
+    paddingHorizontal: 32,
   },
 })

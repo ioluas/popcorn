@@ -1,55 +1,79 @@
-import { JSX } from 'react'
+import { JSX, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
-import Entypo from '@expo/vector-icons/Entypo'
 import { Ionicons } from '@expo/vector-icons'
-import { Preset } from '@/utils/General'
+import { Preset, formatTime } from '@/utils/General'
 import { PresetValues } from '@/components/Quickstart'
-import { formatTime } from '@/utils/General'
+import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
 
 type PresetsProps = {
   presets: Preset[]
   onSelect: (values: PresetValues) => void
+  onStart: (values: PresetValues) => void
   onDelete: (id: string) => void
-  onAdd: () => void
 }
 
-export default function Presets({ presets, onSelect, onDelete, onAdd }: PresetsProps): JSX.Element {
+export default function Presets({ presets, onSelect, onStart, onDelete }: PresetsProps): JSX.Element {
+  const [presetToDelete, setPresetToDelete] = useState<Preset | null>(null)
+
+  const handleConfirmDelete = () => {
+    if (presetToDelete) {
+      onDelete(presetToDelete.id)
+      setPresetToDelete(null)
+    }
+  }
+
+  const getPresetValues = (preset: Preset): PresetValues => ({
+    sets: preset.sets,
+    workTime: preset.workTime,
+    restTime: preset.restTime,
+  })
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>{presets.length === 0 ? 'No presets yet' : 'Presets'}</Text>
-        <TouchableOpacity style={styles.addButton} onPress={onAdd}>
-          <Entypo name="plus" size={16} color={styles.addButtonText.color} />
-          <Text style={styles.addButtonText}>Add</Text>
-        </TouchableOpacity>
-      </View>
+      <Text style={styles.title}>{presets.length === 0 ? 'No presets yet' : 'Presets'}</Text>
       {presets.length === 0 ? (
-        <Text style={styles.description}>
-          To create your first preset, use the Save button to quick save. For advanced settings use the Add button.
-        </Text>
+        <Text style={styles.description}>To create your first preset, use the Save button in Quickstart.</Text>
       ) : (
         <View style={styles.list}>
           {presets.map((preset) => (
-            <TouchableOpacity
-              key={preset.id}
-              style={styles.item}
-              onPress={() => onSelect({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
-            >
+            <View key={preset.id} style={styles.item}>
               <View style={styles.itemContent}>
-                <View>
+                <TouchableOpacity style={styles.itemInfo} onPress={() => onSelect(getPresetValues(preset))}>
                   <Text style={styles.itemName}>{preset.name}</Text>
                   <Text style={styles.itemDetails}>
                     {preset.sets} sets · {formatTime(preset.workTime)} work · {formatTime(preset.restTime)} rest
                   </Text>
-                </View>
-                <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(preset.id)}>
-                  <Ionicons name="trash-outline" size={20} color="#b0bec5" />
                 </TouchableOpacity>
+                <View style={styles.itemActions}>
+                  <TouchableOpacity
+                    style={styles.playButton}
+                    onPress={() => onStart(getPresetValues(preset))}
+                    accessibilityLabel={`Start ${preset.name} preset`}
+                    accessibilityRole="button"
+                  >
+                    <Ionicons name="play" size={20} color="#b0bec5" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.deleteButton}
+                    onPress={() => setPresetToDelete(preset)}
+                    accessibilityLabel={`Delete ${preset.name} preset`}
+                    accessibilityRole="button"
+                  >
+                    <Ionicons name="trash-outline" size={20} color="#b0bec5" />
+                  </TouchableOpacity>
+                </View>
               </View>
-            </TouchableOpacity>
+            </View>
           ))}
         </View>
       )}
+
+      <ConfirmDeleteModal
+        visible={presetToDelete !== null}
+        presetName={presetToDelete?.name ?? ''}
+        onConfirm={handleConfirmDelete}
+        onClose={() => setPresetToDelete(null)}
+      />
     </View>
   )
 }
@@ -59,30 +83,11 @@ const styles = StyleSheet.create({
     marginTop: 24,
     paddingHorizontal: 8,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: 12,
-  },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#fff',
-  },
-  addButton: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#fff',
-    borderRadius: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 16,
-  },
-  addButtonText: {
-    fontSize: 14,
-    color: '#fff',
+    marginBottom: 12,
   },
   description: {
     fontSize: 16,
@@ -101,6 +106,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+  },
+  itemInfo: {
+    flex: 1,
+  },
+  itemActions: {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  playButton: {
+    padding: 8,
   },
   deleteButton: {
     padding: 8,

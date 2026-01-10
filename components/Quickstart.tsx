@@ -41,9 +41,9 @@ export default function Quickstart({ values, onChange, onStart, onSave }: Quicks
         <Text style={styles.cardTitle}>Quickstart</Text>
         <Text style={styles.chevron}>
           {isExpanded ? (
-            <Ionicons name="chevron-expand" size={24} color="#e2e2e2" />
-          ) : (
             <Ionicons name="chevron-collapse" size={24} color="#e2e2e2" />
+          ) : (
+            <Ionicons name="chevron-expand" size={24} color="#e2e2e2" />
           )}
         </Text>
       </TouchableOpacity>

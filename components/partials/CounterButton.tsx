@@ -1,4 +1,4 @@
-import { JSX, useRef, useCallback } from 'react'
+import { JSX, useRef, useCallback, useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import * as Haptics from 'expo-haptics'
 
@@ -8,13 +8,20 @@ type CounterButtonProps = {
   setter: (updater: (prev: number) => number) => void
 }
 
-const INITIAL_DELAY = 300
-const RAPID_INTERVAL = 100
+export const INITIAL_DELAY = 300
+export const RAPID_INTERVAL = 100
 
 export default function CounterButton({ type, amount, setter }: CounterButtonProps): JSX.Element {
   const content = `${type === 'increment' ? '+' : '-'}${amount > 1 ? amount : ''}`
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) clearTimeout(timeoutRef.current)
+      if (intervalRef.current) clearInterval(intervalRef.current)
+    }
+  }, [])
 
   const updateValue = useCallback(() => {
     void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
