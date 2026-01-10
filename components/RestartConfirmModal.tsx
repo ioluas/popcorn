@@ -1,40 +1,28 @@
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { useTranslation } from 'react-i18next'
 
-type ConfirmDeleteModalProps = {
+type RestartConfirmModalProps = {
   visible: boolean
-  presetName: string
   onConfirm: () => void
   onClose: () => void
 }
 
-export default function ConfirmDeleteModal({ visible, presetName, onConfirm, onClose }: ConfirmDeleteModalProps) {
+export default function RestartConfirmModal({ visible, onConfirm, onClose }: RestartConfirmModalProps) {
   const { t } = useTranslation()
 
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>{t('confirmDeleteModal.title')}</Text>
-
-          <Text style={styles.message}>{t('confirmDeleteModal.message', { presetName })}</Text>
+          <Text style={styles.title}>{t('common.restartRequired')}</Text>
+          <Text style={styles.message}>{t('common.restartMessage')}</Text>
 
           <View style={styles.buttons}>
-            <TouchableOpacity
-              style={styles.cancelButton}
-              onPress={onClose}
-              accessibilityRole="button"
-              accessibilityLabel={t('confirmDeleteModal.accessibility.cancelDelete')}
-            >
-              <Text style={styles.cancelButtonText}>{t('confirmDeleteModal.buttons.cancel')}</Text>
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+              <Text style={styles.cancelButtonText}>{t('common.cancel')}</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={onConfirm}
-              accessibilityRole="button"
-              accessibilityLabel={t('confirmDeleteModal.accessibility.confirmDelete')}
-            >
-              <Text style={styles.deleteButtonText}>{t('confirmDeleteModal.buttons.delete')}</Text>
+            <TouchableOpacity style={styles.confirmButton} onPress={onConfirm}>
+              <Text style={styles.confirmButtonText}>{t('common.restart')}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -62,7 +50,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '600',
     color: '#fff',
-    marginBottom: 16,
+    marginBottom: 12,
     textAlign: 'center',
   },
   message: {
@@ -70,6 +58,7 @@ const styles = StyleSheet.create({
     color: '#b0bec5',
     textAlign: 'center',
     marginBottom: 20,
+    lineHeight: 22,
   },
   buttons: {
     flexDirection: 'row',
@@ -87,16 +76,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
   },
-  deleteButton: {
+  confirmButton: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 8,
-    backgroundColor: '#c0392b',
+    backgroundColor: '#5d7a8c',
     alignItems: 'center',
   },
-  deleteButtonText: {
+  confirmButtonText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#e8d44d',
     fontWeight: '600',
   },
 })

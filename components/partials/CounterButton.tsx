@@ -1,17 +1,20 @@
 import { JSX, useRef, useCallback, useEffect } from 'react'
 import { StyleSheet, Text, TouchableOpacity } from 'react-native'
 import * as Haptics from 'expo-haptics'
+import { useTranslation } from 'react-i18next'
 
 type CounterButtonProps = {
   type: 'increment' | 'decrement'
   amount: number
   setter: (updater: (prev: number) => number) => void
+  testID?: string
 }
 
 export const INITIAL_DELAY = 300
 export const RAPID_INTERVAL = 100
 
-export default function CounterButton({ type, amount, setter }: CounterButtonProps): JSX.Element {
+export default function CounterButton({ type, amount, setter, testID }: CounterButtonProps): JSX.Element {
+  const { t } = useTranslation()
   const content = `${type === 'increment' ? '+' : '-'}${amount > 1 ? amount : ''}`
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -50,8 +53,18 @@ export default function CounterButton({ type, amount, setter }: CounterButtonPro
     }
   }, [])
 
+  const accessibilityLabel =
+    type === 'increment' ? t('common.increaseBy', { amount }) : t('common.decreaseBy', { amount })
+
   return (
-    <TouchableOpacity style={styles.container} onPressIn={handlePressIn} onPressOut={handlePressOut}>
+    <TouchableOpacity
+      style={styles.container}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      accessibilityLabel={accessibilityLabel}
+      accessibilityRole="button"
+      testID={testID}
+    >
       <Text style={styles.counterButton}>{content}</Text>
     </TouchableOpacity>
   )

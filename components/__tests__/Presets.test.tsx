@@ -22,19 +22,19 @@ describe('Presets', () => {
   describe('empty state', () => {
     it('shows empty message when no presets', () => {
       const { getByText } = render(<Presets {...defaultProps} presets={[]} />)
-      expect(getByText('No presets yet')).toBeTruthy()
+      expect(getByText('presets.noPresets')).toBeTruthy()
     })
 
     it('shows instruction to create preset', () => {
       const { getByText } = render(<Presets {...defaultProps} presets={[]} />)
-      expect(getByText('To create your first preset, use the Save button in Quickstart.')).toBeTruthy()
+      expect(getByText('presets.description')).toBeTruthy()
     })
   })
 
   describe('rendering presets', () => {
     it('shows Presets title when presets exist', () => {
       const { getByText } = render(<Presets {...defaultProps} />)
-      expect(getByText('Presets')).toBeTruthy()
+      expect(getByText('presets.title')).toBeTruthy()
     })
 
     it('displays preset names', () => {
@@ -44,9 +44,9 @@ describe('Presets', () => {
     })
 
     it('displays preset details with formatted times', () => {
-      const { getByText } = render(<Presets {...defaultProps} />)
-      expect(getByText('4 sets · 00:30 work · 00:10 rest')).toBeTruthy()
-      expect(getByText('8 sets · 00:20 work · 00:10 rest')).toBeTruthy()
+      const { getAllByText } = render(<Presets {...defaultProps} />)
+      // The mock returns the key for both presets
+      expect(getAllByText('presets.itemDetails').length).toBe(2)
     })
   })
 
@@ -66,9 +66,10 @@ describe('Presets', () => {
 
   describe('starting preset', () => {
     it('calls onStart with preset values when play button is pressed', () => {
-      const { getByLabelText } = render(<Presets {...defaultProps} />)
+      const { getAllByLabelText } = render(<Presets {...defaultProps} />)
 
-      fireEvent.press(getByLabelText('Start HIIT preset'))
+      // The mock returns the key for all presets since interpolation doesn't change the key
+      fireEvent.press(getAllByLabelText('presets.accessibility.startPreset')[0])
 
       expect(defaultProps.onStart).toHaveBeenCalledWith({
         sets: 4,
@@ -80,53 +81,50 @@ describe('Presets', () => {
 
   describe('deleting preset', () => {
     it('shows confirmation modal when delete button is pressed', () => {
-      const { getByLabelText, getByText } = render(<Presets {...defaultProps} />)
+      const { getAllByLabelText, getByText } = render(<Presets {...defaultProps} />)
 
-      fireEvent.press(getByLabelText('Delete HIIT preset'))
+      fireEvent.press(getAllByLabelText('presets.accessibility.deletePreset')[0])
 
-      expect(getByText('Delete Preset')).toBeTruthy()
-      expect(getByText('Are you sure you want to delete "HIIT"?')).toBeTruthy()
+      expect(getByText('confirmDeleteModal.title')).toBeTruthy()
     })
 
     it('calls onDelete when deletion is confirmed', () => {
-      const { getByLabelText, getByText } = render(<Presets {...defaultProps} />)
+      const { getAllByLabelText, getByText } = render(<Presets {...defaultProps} />)
 
-      fireEvent.press(getByLabelText('Delete HIIT preset'))
-      fireEvent.press(getByText('Delete'))
+      fireEvent.press(getAllByLabelText('presets.accessibility.deletePreset')[0])
+      fireEvent.press(getByText('confirmDeleteModal.buttons.delete'))
 
       expect(defaultProps.onDelete).toHaveBeenCalledWith('1')
     })
 
     it('does not call onDelete when deletion is cancelled', () => {
-      const { getByLabelText, getByText } = render(<Presets {...defaultProps} />)
+      const { getAllByLabelText, getByText } = render(<Presets {...defaultProps} />)
 
-      fireEvent.press(getByLabelText('Delete HIIT preset'))
-      fireEvent.press(getByText('Cancel'))
+      fireEvent.press(getAllByLabelText('presets.accessibility.deletePreset')[0])
+      fireEvent.press(getByText('confirmDeleteModal.buttons.cancel'))
 
       expect(defaultProps.onDelete).not.toHaveBeenCalled()
     })
 
     it('closes modal after confirming delete', () => {
-      const { getByLabelText, getByText, queryByText } = render(<Presets {...defaultProps} />)
+      const { getAllByLabelText, getByText, queryByText } = render(<Presets {...defaultProps} />)
 
-      fireEvent.press(getByLabelText('Delete HIIT preset'))
-      fireEvent.press(getByText('Delete'))
+      fireEvent.press(getAllByLabelText('presets.accessibility.deletePreset')[0])
+      fireEvent.press(getByText('confirmDeleteModal.buttons.delete'))
 
-      expect(queryByText('Delete Preset')).toBeNull()
+      expect(queryByText('confirmDeleteModal.title')).toBeNull()
     })
   })
 
   describe('accessibility', () => {
     it('has accessible play buttons for each preset', () => {
-      const { getByLabelText } = render(<Presets {...defaultProps} />)
-      expect(getByLabelText('Start HIIT preset')).toBeTruthy()
-      expect(getByLabelText('Start Tabata preset')).toBeTruthy()
+      const { getAllByLabelText } = render(<Presets {...defaultProps} />)
+      expect(getAllByLabelText('presets.accessibility.startPreset').length).toBe(2)
     })
 
     it('has accessible delete buttons for each preset', () => {
-      const { getByLabelText } = render(<Presets {...defaultProps} />)
-      expect(getByLabelText('Delete HIIT preset')).toBeTruthy()
-      expect(getByLabelText('Delete Tabata preset')).toBeTruthy()
+      const { getAllByLabelText } = render(<Presets {...defaultProps} />)
+      expect(getAllByLabelText('presets.accessibility.deletePreset').length).toBe(2)
     })
   })
 })

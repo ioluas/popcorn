@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { StyleSheet, ScrollView, View } from 'react-native'
+import { StyleSheet, ScrollView, View, TouchableOpacity } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import Quickstart, { PresetValues } from '@/components/Quickstart'
 import Presets from '@/components/Presets'
 import SavePresetModal from '@/components/SavePresetModal'
@@ -40,7 +41,14 @@ export default function Page() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ padding: 16 }}>
+      <View style={styles.header}>
+        <View style={styles.headerSpacer} />
+        <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/settings')}>
+          <Ionicons name="settings-outline" size={24} color="#b0bec5" />
+        </TouchableOpacity>
+      </View>
+
+      <View style={{ paddingHorizontal: 16 }}>
         <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
       </View>
 
@@ -62,6 +70,22 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#242424',
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  headerSpacer: {
+    width: 40,
+  },
+  settingsButton: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   scrollView: {
     flex: 1,

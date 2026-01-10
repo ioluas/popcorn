@@ -7,11 +7,6 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
-    "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "ios": {
       "supportsTablet": true
     },
@@ -21,12 +16,21 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["android.permission.RECORD_AUDIO", "android.permission.MODIFY_AUDIO_SETTINGS"],
+      "package": "me.popcorn.timer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "scheme": "timer",
-    "plugins": ["expo-router", "expo-audio"]
+    "plugins": ["expo-router", "expo-audio"],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "150d1f92-b48f-4cce-9d1e-aaaa83060bba"
+      }
+    },
+    "owner": "ioluas"
   }
 }

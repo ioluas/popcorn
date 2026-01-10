@@ -1,8 +1,9 @@
 import { Dispatch, JSX, SetStateAction, useState } from 'react'
 import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
-import CounterButton from '@/components/partials/CounterButton'
 import MaterialIcons from '@expo/vector-icons/MaterialIcons'
+import { useTranslation } from 'react-i18next'
+import CounterButton from '@/components/partials/CounterButton'
 import { formatTime } from '@/utils/General'
 
 export type PresetValues = {
@@ -19,6 +20,7 @@ type QuickstartProps = {
 }
 
 export default function Quickstart({ values, onChange, onStart, onSave }: QuickstartProps): JSX.Element {
+  const { t } = useTranslation()
   const [isExpanded, setIsExpanded] = useState<boolean>(true)
 
   const { sets, workTime, restTime } = values
@@ -38,7 +40,7 @@ export default function Quickstart({ values, onChange, onStart, onSave }: Quicks
   return (
     <View style={styles.card}>
       <TouchableOpacity style={styles.cardHeader} onPress={() => setIsExpanded(!isExpanded)}>
-        <Text style={styles.cardTitle}>Quickstart</Text>
+        <Text style={styles.cardTitle}>{t('quickstart.title')}</Text>
         <Text style={styles.chevron}>
           {isExpanded ? (
             <Ionicons name="chevron-collapse" size={24} color="#e2e2e2" />
@@ -52,50 +54,50 @@ export default function Quickstart({ values, onChange, onStart, onSave }: Quicks
         <View style={styles.cardContent}>
           {/* Sets */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Sets</Text>
+            <Text style={styles.label}>{t('quickstart.labels.sets')}</Text>
             <View style={styles.counter}>
-              <CounterButton type={'decrement'} amount={1} setter={setSets} />
+              <CounterButton type={'decrement'} amount={1} setter={setSets} testID="sets-decrement" />
               <Text style={styles.counterValue}>{sets}</Text>
-              <CounterButton type={'increment'} amount={1} setter={setSets} />
+              <CounterButton type={'increment'} amount={1} setter={setSets} testID="sets-increment" />
             </View>
           </View>
 
           {/* Workout */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Workout</Text>
+            <Text style={styles.label}>{t('quickstart.labels.workout')}</Text>
             <View style={styles.counter}>
-              <CounterButton type={'decrement'} amount={5} setter={setWorkTime} />
-              <CounterButton type={'decrement'} amount={1} setter={setWorkTime} />
+              <CounterButton type={'decrement'} amount={5} setter={setWorkTime} testID="work-decrement-5" />
+              <CounterButton type={'decrement'} amount={1} setter={setWorkTime} testID="work-decrement-1" />
               <Text style={styles.timeValue}>{formatTime(workTime)}</Text>
-              <CounterButton type={'increment'} amount={1} setter={setWorkTime} />
-              <CounterButton type={'increment'} amount={5} setter={setWorkTime} />
+              <CounterButton type={'increment'} amount={1} setter={setWorkTime} testID="work-increment-1" />
+              <CounterButton type={'increment'} amount={5} setter={setWorkTime} testID="work-increment-5" />
             </View>
           </View>
 
           {/* Rest */}
           <View style={styles.inputGroup}>
-            <Text style={styles.label}>Rest</Text>
+            <Text style={styles.label}>{t('quickstart.labels.rest')}</Text>
             <View style={styles.counter}>
-              <CounterButton type={'decrement'} amount={5} setter={setRestTime} />
-              <CounterButton type={'decrement'} amount={1} setter={setRestTime} />
+              <CounterButton type={'decrement'} amount={5} setter={setRestTime} testID="rest-decrement-5" />
+              <CounterButton type={'decrement'} amount={1} setter={setRestTime} testID="rest-decrement-1" />
               <Text style={styles.timeValue}>{formatTime(restTime)}</Text>
-              <CounterButton type={'increment'} amount={1} setter={setRestTime} />
-              <CounterButton type={'increment'} amount={5} setter={setRestTime} />
+              <CounterButton type={'increment'} amount={1} setter={setRestTime} testID="rest-increment-1" />
+              <CounterButton type={'increment'} amount={5} setter={setRestTime} testID="rest-increment-5" />
             </View>
           </View>
 
           {/* Save Button */}
           <TouchableOpacity style={styles.saveButton} onPress={onSave}>
             <Ionicons name={'save-outline'} size={16} color={styles.saveButtonText.color} />
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>{t('quickstart.buttons.save')}</Text>
           </TouchableOpacity>
         </View>
       )}
 
       {/* Start Button */}
-      <TouchableOpacity style={styles.startButton} onPress={onStart}>
+      <TouchableOpacity style={styles.startButton} onPress={() => onStart()}>
         <MaterialIcons name="electric-bolt" size={24} color={styles.startButtonText.color} />
-        <Text style={styles.startButtonText}>Start</Text>
+        <Text style={styles.startButtonText}>{t('quickstart.buttons.start')}</Text>
       </TouchableOpacity>
     </View>
   )

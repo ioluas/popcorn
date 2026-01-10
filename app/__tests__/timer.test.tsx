@@ -57,20 +57,23 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('WORK')).toBeTruthy()
+      expect(getByText('timer.phases.work')).toBeTruthy()
       expect(getByText('00:30')).toBeTruthy()
     })
 
-    it('navigates back when sets is missing', () => {
+    it('renders nothing when sets is missing (waits for params)', () => {
       mockParams = { workTime: '30', restTime: '10' }
 
-      render(<TimerPage />)
+      const { queryByText } = render(<TimerPage />)
 
       act(() => {
         jest.runAllTimers()
       })
 
-      expect(mockBack).toHaveBeenCalled()
+      // Should not navigate back, just wait for params to be available
+      expect(mockBack).not.toHaveBeenCalled()
+      // Should render nothing while waiting
+      expect(queryByText('timer.phases.work')).toBeNull()
     })
 
     it('navigates back when sets is zero', () => {
@@ -102,7 +105,7 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('WORK')).toBeTruthy()
+      expect(getByText('timer.phases.work')).toBeTruthy()
     })
   })
 
@@ -120,7 +123,7 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('WORK')).toBeTruthy()
+      expect(getByText('timer.phases.work')).toBeTruthy()
     })
 
     it('displays REST label during rest phase', () => {
@@ -132,7 +135,7 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('REST')).toBeTruthy()
+      expect(getByText('timer.phases.rest')).toBeTruthy()
     })
 
     it('displays Complete! when timer is complete', () => {
@@ -144,7 +147,7 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('Complete!')).toBeTruthy()
+      expect(getByText('timer.phases.complete')).toBeTruthy()
     })
   })
 
@@ -174,7 +177,7 @@ describe('TimerPage', () => {
 
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('Set 2 / 5')).toBeTruthy()
+      expect(getByText('timer.setProgress')).toBeTruthy()
     })
 
     it('does not display negative time', () => {
@@ -282,13 +285,13 @@ describe('TimerPage', () => {
     it('renders hold to exit button', () => {
       const { getByText } = render(<TimerPage />)
 
-      expect(getByText('Hold to Exit')).toBeTruthy()
+      expect(getByText('timer.holdToExit')).toBeTruthy()
     })
 
     it('navigates back after holding for 1 second', () => {
       const { getByText } = render(<TimerPage />)
 
-      const exitButton = getByText('Hold to Exit')
+      const exitButton = getByText('timer.holdToExit')
       fireEvent(exitButton, 'pressIn')
 
       act(() => {
@@ -305,7 +308,7 @@ describe('TimerPage', () => {
     it('does not navigate if released early', () => {
       const { getByText } = render(<TimerPage />)
 
-      const exitButton = getByText('Hold to Exit')
+      const exitButton = getByText('timer.holdToExit')
       fireEvent(exitButton, 'pressIn')
 
       act(() => {
