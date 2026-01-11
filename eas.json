@@ -1,4 +1,8 @@
 {
+  "cli": {
+    "version": ">= 16.28.0",
+    "requireCommit": true
+  },
   "build": {
     "preview": {
       "distribution": "internal"

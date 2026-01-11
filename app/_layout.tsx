@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react'
 import { View, ActivityIndicator, I18nManager, Alert } from 'react-native'
 import { Stack } from 'expo-router'
 import { I18nextProvider } from 'react-i18next'
-import i18n, { initI18n, isRTL } from '@/i18n'
+import i18n, { initI18n, isRTL, SupportedLanguage } from '@/i18n'
 
 export default function RootLayout() {
   const [isI18nReady, setIsI18nReady] = useState(false)
 
   useEffect(() => {
     initI18n().then(() => {
-      const currentLang = i18n.language
+      const currentLang = i18n.language as SupportedLanguage
       const shouldBeRTL = isRTL(currentLang)
       const currentlyRTL = I18nManager.isRTL
 

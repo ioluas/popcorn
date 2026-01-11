@@ -1,8 +1,8 @@
 import { I18nManager } from 'react-native'
 import { SupportedLanguage, RTL_LANGUAGES } from './types'
 
-export function isRTL(language: string): boolean {
-  return RTL_LANGUAGES.includes(language as SupportedLanguage)
+export function isRTL(language: SupportedLanguage): boolean {
+  return RTL_LANGUAGES.includes(language)
 }
 
 /**

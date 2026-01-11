@@ -90,22 +90,27 @@ describe('SettingsPage', () => {
       expect(getByText('العربية')).toBeTruthy()
     })
 
-    it('shows checkmark on current language', () => {
-      mockI18n.language = 'en'
-      const { getAllByTestId } = render(<SettingsPage />)
-      // The checkmark icon would be rendered for the selected language
-      // We can verify the selected styling is applied
-      expect(getAllByTestId).toBeDefined()
+    it('shows checkmark only on current language', () => {
+      mockI18n.language = 'sv'
+      const { getAllByText } = render(<SettingsPage />)
+
+      // Ionicons mock renders icon name as text content
+      // Only one checkmark should be rendered (for the selected language)
+      const checkmarks = getAllByText('checkmark')
+
+      expect(checkmarks).toHaveLength(1)
     })
   })
 
   describe('navigation', () => {
     it('navigates back when back button is pressed', () => {
-      const { getByTestId } = render(<SettingsPage />)
+      const { getByText } = render(<SettingsPage />)
 
-      // Find the back button by its parent touchable
-      const backButtons = getByTestId
-      expect(backButtons).toBeDefined()
+      // Ionicons mock renders icon name as text content
+      const backIcon = getByText('arrow-back')
+      fireEvent.press(backIcon)
+
+      expect(mockBack).toHaveBeenCalledTimes(1)
     })
   })
 
