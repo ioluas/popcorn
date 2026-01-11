@@ -1,6 +1,16 @@
 # Timer
 
+[![CI](https://github.com/ioluas/popcorn/actions/workflows/ci.yml/badge.svg)](https://github.com/ioluas/popcorn/actions/workflows/ci.yml)
+
 A bespoke workout interval timer app built with React Native and Expo for my niece. Popcorn is the name of her pet cockatoo bird.
+
+## Screenshots
+
+<p align="center">
+  <img src="screenshots/main.jpeg" width="250" alt="Main screen" />
+  <img src="screenshots/timer.jpeg" width="250" alt="Timer screen" />
+  <img src="screenshots/settings.jpeg" width="250" alt="Settings screen" />
+</p>
 
 ## Features
 
@@ -50,4 +60,3 @@ eas build --platform android --profile development
 # or using expo go
 npm run start
 ```
-
