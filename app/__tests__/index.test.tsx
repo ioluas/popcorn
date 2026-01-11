@@ -25,10 +25,12 @@ jest.mock('@/hooks/usePresets', () => ({
 
 jest.mock('@/components/Quickstart', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View, Text, Pressable } = require('react-native')
+  const React = require('react')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const RN = require('react-native')
   return {
     __esModule: true,
-    default: ({
+    default: function MockQuickstart({
       values,
       onChange,
       onStart,
@@ -38,22 +40,32 @@ jest.mock('@/components/Quickstart', () => {
       onChange: (values: { sets: number; workTime: number; restTime: number }) => void
       onStart: () => void
       onSave: () => void
-    }) => (
-      <View testID="quickstart">
-        <Text testID="quickstart-sets">{values.sets}</Text>
-        <Text testID="quickstart-workTime">{values.workTime}</Text>
-        <Text testID="quickstart-restTime">{values.restTime}</Text>
-        <Pressable testID="quickstart-start" onPress={onStart}>
-          <Text>Start</Text>
-        </Pressable>
-        <Pressable testID="quickstart-save" onPress={onSave}>
-          <Text>Save</Text>
-        </Pressable>
-        <Pressable testID="quickstart-change" onPress={() => onChange({ sets: 5, workTime: 45, restTime: 15 })}>
-          <Text>Change</Text>
-        </Pressable>
-      </View>
-    ),
+    }) {
+      return React.createElement(RN.View, { testID: 'quickstart' }, [
+        React.createElement(RN.Text, { testID: 'quickstart-sets', key: 'sets' }, values.sets),
+        React.createElement(RN.Text, { testID: 'quickstart-workTime', key: 'workTime' }, values.workTime),
+        React.createElement(RN.Text, { testID: 'quickstart-restTime', key: 'restTime' }, values.restTime),
+        React.createElement(
+          RN.Pressable,
+          { testID: 'quickstart-start', key: 'start', onPress: onStart },
+          React.createElement(RN.Text, null, 'Start')
+        ),
+        React.createElement(
+          RN.Pressable,
+          { testID: 'quickstart-save', key: 'save', onPress: onSave },
+          React.createElement(RN.Text, null, 'Save')
+        ),
+        React.createElement(
+          RN.Pressable,
+          {
+            testID: 'quickstart-change',
+            key: 'change',
+            onPress: () => onChange({ sets: 5, workTime: 45, restTime: 15 }),
+          },
+          React.createElement(RN.Text, null, 'Change')
+        ),
+      ])
+    },
   }
 })
 
@@ -67,10 +79,12 @@ interface MockPreset {
 
 jest.mock('@/components/Presets', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View, Text, Pressable } = require('react-native')
+  const React = require('react')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const RN = require('react-native')
   return {
     __esModule: true,
-    default: ({
+    default: function MockPresets({
       presets,
       onSelect,
       onStart,
@@ -80,39 +94,55 @@ jest.mock('@/components/Presets', () => {
       onSelect: (values: { sets: number; workTime: number; restTime: number }) => void
       onStart: (values: { sets: number; workTime: number; restTime: number }) => void
       onDelete: (id: string) => void
-    }) => (
-      <View testID="presets">
-        {presets.map((preset: MockPreset) => (
-          <View key={preset.id} testID={`preset-${preset.id}`}>
-            <Text>{preset.name}</Text>
-            <Pressable
-              testID={`preset-select-${preset.id}`}
-              onPress={() => onSelect({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
-            >
-              <Text>Select</Text>
-            </Pressable>
-            <Pressable
-              testID={`preset-start-${preset.id}`}
-              onPress={() => onStart({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime })}
-            >
-              <Text>Start Preset</Text>
-            </Pressable>
-            <Pressable testID={`preset-delete-${preset.id}`} onPress={() => onDelete(preset.id)}>
-              <Text>Delete</Text>
-            </Pressable>
-          </View>
-        ))}
-      </View>
-    ),
+    }) {
+      return React.createElement(
+        RN.View,
+        { testID: 'presets' },
+        presets.map((preset: MockPreset) =>
+          React.createElement(RN.View, { key: preset.id, testID: `preset-${preset.id}` }, [
+            React.createElement(RN.Text, { key: 'name' }, preset.name),
+            React.createElement(
+              RN.Pressable,
+              {
+                key: 'select',
+                testID: `preset-select-${preset.id}`,
+                onPress: () => onSelect({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime }),
+              },
+              React.createElement(RN.Text, null, 'Select')
+            ),
+            React.createElement(
+              RN.Pressable,
+              {
+                key: 'start',
+                testID: `preset-start-${preset.id}`,
+                onPress: () => onStart({ sets: preset.sets, workTime: preset.workTime, restTime: preset.restTime }),
+              },
+              React.createElement(RN.Text, null, 'Start Preset')
+            ),
+            React.createElement(
+              RN.Pressable,
+              {
+                key: 'delete',
+                testID: `preset-delete-${preset.id}`,
+                onPress: () => onDelete(preset.id),
+              },
+              React.createElement(RN.Text, null, 'Delete')
+            ),
+          ])
+        )
+      )
+    },
   }
 })
 
 jest.mock('@/components/SavePresetModal', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
-  const { View, Text, Pressable } = require('react-native')
+  const React = require('react')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const RN = require('react-native')
   return {
     __esModule: true,
-    default: ({
+    default: function MockSavePresetModal({
       visible,
       values,
       onSave,
@@ -122,21 +152,23 @@ jest.mock('@/components/SavePresetModal', () => {
       values: { sets: number; workTime: number; restTime: number }
       onSave: (name: string) => void
       onClose: () => void
-    }) => {
+    }) {
       if (!visible) return null
-      return (
-        <View testID="save-modal">
-          <Text testID="modal-sets">{values.sets}</Text>
-          <Text testID="modal-workTime">{values.workTime}</Text>
-          <Text testID="modal-restTime">{values.restTime}</Text>
-          <Pressable testID="modal-save" onPress={() => onSave('New Preset')}>
-            <Text>Save Preset</Text>
-          </Pressable>
-          <Pressable testID="modal-close" onPress={onClose}>
-            <Text>Close</Text>
-          </Pressable>
-        </View>
-      )
+      return React.createElement(RN.View, { testID: 'save-modal' }, [
+        React.createElement(RN.Text, { testID: 'modal-sets', key: 'sets' }, values.sets),
+        React.createElement(RN.Text, { testID: 'modal-workTime', key: 'workTime' }, values.workTime),
+        React.createElement(RN.Text, { testID: 'modal-restTime', key: 'restTime' }, values.restTime),
+        React.createElement(
+          RN.Pressable,
+          { testID: 'modal-save', key: 'save', onPress: () => onSave('New Preset') },
+          React.createElement(RN.Text, null, 'Save Preset')
+        ),
+        React.createElement(
+          RN.Pressable,
+          { testID: 'modal-close', key: 'close', onPress: onClose },
+          React.createElement(RN.Text, null, 'Close')
+        ),
+      ])
     },
   }
 })

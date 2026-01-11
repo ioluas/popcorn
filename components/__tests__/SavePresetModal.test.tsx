@@ -16,30 +16,30 @@ describe('SavePresetModal', () => {
   describe('rendering', () => {
     it('renders title', () => {
       const { getByText } = render(<SavePresetModal {...defaultProps} />)
-      expect(getByText('Save Preset')).toBeTruthy()
+      expect(getByText('savePresetModal.title')).toBeTruthy()
     })
 
     it('displays preset values', () => {
       const { getByText } = render(<SavePresetModal {...defaultProps} />)
 
-      expect(getByText('Sets')).toBeTruthy()
+      expect(getByText('savePresetModal.labels.sets')).toBeTruthy()
       expect(getByText('3')).toBeTruthy()
-      expect(getByText('Work')).toBeTruthy()
+      expect(getByText('savePresetModal.labels.work')).toBeTruthy()
       expect(getByText('00:30')).toBeTruthy()
-      expect(getByText('Rest')).toBeTruthy()
+      expect(getByText('savePresetModal.labels.rest')).toBeTruthy()
       expect(getByText('00:10')).toBeTruthy()
     })
 
     it('renders input with placeholder', () => {
       const { getByPlaceholderText } = render(<SavePresetModal {...defaultProps} />)
-      expect(getByPlaceholderText('Enter preset name')).toBeTruthy()
+      expect(getByPlaceholderText('savePresetModal.placeholder')).toBeTruthy()
     })
 
     it('renders Cancel and Save buttons', () => {
       const { getByText } = render(<SavePresetModal {...defaultProps} />)
 
-      expect(getByText('Cancel')).toBeTruthy()
-      expect(getByText('Save')).toBeTruthy()
+      expect(getByText('savePresetModal.buttons.cancel')).toBeTruthy()
+      expect(getByText('savePresetModal.buttons.save')).toBeTruthy()
     })
   })
 
@@ -47,7 +47,7 @@ describe('SavePresetModal', () => {
     it('save button is disabled when name is empty', () => {
       const { getByText } = render(<SavePresetModal {...defaultProps} />)
 
-      const saveButton = getByText('Save')
+      const saveButton = getByText('savePresetModal.buttons.save')
       fireEvent.press(saveButton)
 
       expect(defaultProps.onSave).not.toHaveBeenCalled()
@@ -56,10 +56,10 @@ describe('SavePresetModal', () => {
     it('save button is disabled when name is only whitespace', () => {
       const { getByText, getByPlaceholderText } = render(<SavePresetModal {...defaultProps} />)
 
-      const input = getByPlaceholderText('Enter preset name')
+      const input = getByPlaceholderText('savePresetModal.placeholder')
       fireEvent.changeText(input, '   ')
 
-      const saveButton = getByText('Save')
+      const saveButton = getByText('savePresetModal.buttons.save')
       fireEvent.press(saveButton)
 
       expect(defaultProps.onSave).not.toHaveBeenCalled()
@@ -70,10 +70,10 @@ describe('SavePresetModal', () => {
     it('calls onSave with trimmed name when save is pressed', () => {
       const { getByText, getByPlaceholderText } = render(<SavePresetModal {...defaultProps} />)
 
-      const input = getByPlaceholderText('Enter preset name')
+      const input = getByPlaceholderText('savePresetModal.placeholder')
       fireEvent.changeText(input, '  My Workout  ')
 
-      const saveButton = getByText('Save')
+      const saveButton = getByText('savePresetModal.buttons.save')
       fireEvent.press(saveButton)
 
       expect(defaultProps.onSave).toHaveBeenCalledWith('My Workout')
@@ -82,9 +82,9 @@ describe('SavePresetModal', () => {
     it('clears input after save', () => {
       const { getByText, getByPlaceholderText } = render(<SavePresetModal {...defaultProps} />)
 
-      const input = getByPlaceholderText('Enter preset name')
+      const input = getByPlaceholderText('savePresetModal.placeholder')
       fireEvent.changeText(input, 'Test Preset')
-      fireEvent.press(getByText('Save'))
+      fireEvent.press(getByText('savePresetModal.buttons.save'))
 
       expect(input).toHaveDisplayValue('')
     })
@@ -94,7 +94,7 @@ describe('SavePresetModal', () => {
     it('calls onClose when cancel is pressed', () => {
       const { getByText } = render(<SavePresetModal {...defaultProps} />)
 
-      fireEvent.press(getByText('Cancel'))
+      fireEvent.press(getByText('savePresetModal.buttons.cancel'))
 
       expect(defaultProps.onClose).toHaveBeenCalled()
     })
@@ -102,9 +102,9 @@ describe('SavePresetModal', () => {
     it('clears input when cancel is pressed', () => {
       const { getByText, getByPlaceholderText } = render(<SavePresetModal {...defaultProps} />)
 
-      const input = getByPlaceholderText('Enter preset name')
+      const input = getByPlaceholderText('savePresetModal.placeholder')
       fireEvent.changeText(input, 'Test Preset')
-      fireEvent.press(getByText('Cancel'))
+      fireEvent.press(getByText('savePresetModal.buttons.cancel'))
 
       expect(input).toHaveDisplayValue('')
     })

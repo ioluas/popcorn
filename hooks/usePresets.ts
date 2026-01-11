@@ -40,10 +40,5 @@ export function usePresets() {
     [presets]
   )
 
-  return {
-    presets,
-    isLoading,
-    savePreset,
-    deletePreset,
-  }
+  return { presets, isLoading, savePreset, deletePreset }
 }

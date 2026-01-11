@@ -24,15 +24,15 @@ describe('Quickstart', () => {
   describe('rendering', () => {
     it('renders title', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
-      expect(getByText('Quickstart')).toBeTruthy()
+      expect(getByText('quickstart.title')).toBeTruthy()
     })
 
     it('renders labels', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      expect(getByText('Sets')).toBeTruthy()
-      expect(getByText('Workout')).toBeTruthy()
-      expect(getByText('Rest')).toBeTruthy()
+      expect(getByText('quickstart.labels.sets')).toBeTruthy()
+      expect(getByText('quickstart.labels.workout')).toBeTruthy()
+      expect(getByText('quickstart.labels.rest')).toBeTruthy()
     })
 
     it('displays current values', () => {
@@ -45,12 +45,12 @@ describe('Quickstart', () => {
 
     it('renders Start button', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
-      expect(getByText('Start')).toBeTruthy()
+      expect(getByText('quickstart.buttons.start')).toBeTruthy()
     })
 
     it('renders Save button', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
-      expect(getByText('Save')).toBeTruthy()
+      expect(getByText('quickstart.buttons.save')).toBeTruthy()
     })
   })
 
@@ -58,38 +58,38 @@ describe('Quickstart', () => {
     it('content is visible by default', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      expect(getByText('Sets')).toBeTruthy()
-      expect(getByText('Workout')).toBeTruthy()
-      expect(getByText('Rest')).toBeTruthy()
+      expect(getByText('quickstart.labels.sets')).toBeTruthy()
+      expect(getByText('quickstart.labels.workout')).toBeTruthy()
+      expect(getByText('quickstart.labels.rest')).toBeTruthy()
     })
 
     it('hides content when header is pressed', () => {
       const { getByText, queryByText } = render(<Quickstart {...defaultProps} />)
 
-      fireEvent.press(getByText('Quickstart'))
+      fireEvent.press(getByText('quickstart.title'))
 
-      expect(queryByText('Sets')).toBeNull()
-      expect(queryByText('Workout')).toBeNull()
-      expect(queryByText('Rest')).toBeNull()
+      expect(queryByText('quickstart.labels.sets')).toBeNull()
+      expect(queryByText('quickstart.labels.workout')).toBeNull()
+      expect(queryByText('quickstart.labels.rest')).toBeNull()
     })
 
     it('shows content again when header is pressed twice', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      fireEvent.press(getByText('Quickstart'))
-      fireEvent.press(getByText('Quickstart'))
+      fireEvent.press(getByText('quickstart.title'))
+      fireEvent.press(getByText('quickstart.title'))
 
-      expect(getByText('Sets')).toBeTruthy()
-      expect(getByText('Workout')).toBeTruthy()
-      expect(getByText('Rest')).toBeTruthy()
+      expect(getByText('quickstart.labels.sets')).toBeTruthy()
+      expect(getByText('quickstart.labels.workout')).toBeTruthy()
+      expect(getByText('quickstart.labels.rest')).toBeTruthy()
     })
 
     it('Start button is always visible', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      fireEvent.press(getByText('Quickstart'))
+      fireEvent.press(getByText('quickstart.title'))
 
-      expect(getByText('Start')).toBeTruthy()
+      expect(getByText('quickstart.buttons.start')).toBeTruthy()
     })
   })
 
@@ -97,15 +97,24 @@ describe('Quickstart', () => {
     it('calls onStart when Start button is pressed', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      fireEvent.press(getByText('Start'))
+      fireEvent.press(getByText('quickstart.buttons.start'))
 
       expect(defaultProps.onStart).toHaveBeenCalledTimes(1)
+    })
+
+    it('calls onStart with no arguments (not the touch event)', () => {
+      const { getByText } = render(<Quickstart {...defaultProps} />)
+
+      fireEvent.press(getByText('quickstart.buttons.start'))
+
+      // Ensure onStart is called with no arguments, not the touch event
+      expect(defaultProps.onStart).toHaveBeenCalledWith()
     })
 
     it('calls onSave when Save button is pressed', () => {
       const { getByText } = render(<Quickstart {...defaultProps} />)
 
-      fireEvent.press(getByText('Save'))
+      fireEvent.press(getByText('quickstart.buttons.save'))
 
       expect(defaultProps.onSave).toHaveBeenCalledTimes(1)
     })
@@ -132,6 +141,88 @@ describe('Quickstart', () => {
 
       expect(plus5Buttons.length).toBe(2) // One for workout, one for rest
       expect(minus5Buttons.length).toBe(2)
+    })
+  })
+
+  describe('counter button actions', () => {
+    it('calls onChange with updated sets when + is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('sets-increment'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, sets: 4 })
+    })
+
+    it('calls onChange with updated sets when - is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('sets-decrement'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, sets: 2 })
+    })
+
+    it('calls onChange with updated workTime when +1 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('work-increment-1'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, workTime: 31 })
+    })
+
+    it('calls onChange with updated workTime when -1 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('work-decrement-1'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, workTime: 29 })
+    })
+
+    it('calls onChange with updated workTime when +5 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('work-increment-5'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, workTime: 35 })
+    })
+
+    it('calls onChange with updated workTime when -5 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('work-decrement-5'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, workTime: 25 })
+    })
+
+    it('calls onChange with updated restTime when +1 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('rest-increment-1'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, restTime: 11 })
+    })
+
+    it('calls onChange with updated restTime when -1 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('rest-decrement-1'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, restTime: 9 })
+    })
+
+    it('calls onChange with updated restTime when +5 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('rest-increment-5'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, restTime: 15 })
+    })
+
+    it('calls onChange with updated restTime when -5 is pressed', () => {
+      const { getByTestId } = render(<Quickstart {...defaultProps} />)
+      fireEvent(getByTestId('rest-decrement-5'), 'pressIn')
+      expect(defaultProps.onChange).toHaveBeenCalledTimes(1)
+      const updater = defaultProps.onChange.mock.calls[0][0]
+      expect(updater(defaultProps.values)).toEqual({ ...defaultProps.values, restTime: 5 })
     })
   })
 

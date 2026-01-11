@@ -1,6 +1,7 @@
 import { JSX, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
+import { useTranslation } from 'react-i18next'
 import { Preset, formatTime } from '@/utils/General'
 import { PresetValues } from '@/components/Quickstart'
 import ConfirmDeleteModal from '@/components/ConfirmDeleteModal'
@@ -13,6 +14,7 @@ type PresetsProps = {
 }
 
 export default function Presets({ presets, onSelect, onStart, onDelete }: PresetsProps): JSX.Element {
+  const { t } = useTranslation()
   const [presetToDelete, setPresetToDelete] = useState<Preset | null>(null)
 
   const handleConfirmDelete = () => {
@@ -30,9 +32,9 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{presets.length === 0 ? 'No presets yet' : 'Presets'}</Text>
+      <Text style={styles.title}>{presets.length === 0 ? t('presets.noPresets') : t('presets.title')}</Text>
       {presets.length === 0 ? (
-        <Text style={styles.description}>To create your first preset, use the Save button in Quickstart.</Text>
+        <Text style={styles.description}>{t('presets.description')}</Text>
       ) : (
         <View style={styles.list}>
           {presets.map((preset) => (
@@ -41,14 +43,18 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
                 <TouchableOpacity style={styles.itemInfo} onPress={() => onSelect(getPresetValues(preset))}>
                   <Text style={styles.itemName}>{preset.name}</Text>
                   <Text style={styles.itemDetails}>
-                    {preset.sets} sets · {formatTime(preset.workTime)} work · {formatTime(preset.restTime)} rest
+                    {t('presets.itemDetails', {
+                      sets: preset.sets,
+                      workTime: formatTime(preset.workTime),
+                      restTime: formatTime(preset.restTime),
+                    })}
                   </Text>
                 </TouchableOpacity>
                 <View style={styles.itemActions}>
                   <TouchableOpacity
                     style={styles.playButton}
                     onPress={() => onStart(getPresetValues(preset))}
-                    accessibilityLabel={`Start ${preset.name} preset`}
+                    accessibilityLabel={t('presets.accessibility.startPreset', { name: preset.name })}
                     accessibilityRole="button"
                   >
                     <Ionicons name="play" size={20} color="#b0bec5" />
@@ -56,7 +62,7 @@ export default function Presets({ presets, onSelect, onStart, onDelete }: Preset
                   <TouchableOpacity
                     style={styles.deleteButton}
                     onPress={() => setPresetToDelete(preset)}
-                    accessibilityLabel={`Delete ${preset.name} preset`}
+                    accessibilityLabel={t('presets.accessibility.deletePreset', { name: preset.name })}
                     accessibilityRole="button"
                   >
                     <Ionicons name="trash-outline" size={20} color="#b0bec5" />

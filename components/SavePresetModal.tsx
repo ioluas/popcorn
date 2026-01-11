@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { useTranslation } from 'react-i18next'
 import { PresetValues } from '@/components/Quickstart'
 import { formatTime } from '@/utils/General'
 
@@ -11,6 +12,7 @@ type SavePresetModalProps = {
 }
 
 export default function SavePresetModal({ visible, values, onSave, onClose }: SavePresetModalProps) {
+  const { t } = useTranslation()
   const [name, setName] = useState<string>('')
 
   const handleSave = () => {
@@ -29,26 +31,26 @@ export default function SavePresetModal({ visible, values, onSave, onClose }: Sa
     <Modal visible={visible} transparent animationType="fade" onRequestClose={handleClose}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Save Preset</Text>
+          <Text style={styles.title}>{t('savePresetModal.title')}</Text>
 
           <View style={styles.valuesContainer}>
             <View style={styles.valueRow}>
-              <Text style={styles.valueLabel}>Sets</Text>
+              <Text style={styles.valueLabel}>{t('savePresetModal.labels.sets')}</Text>
               <Text style={styles.valueText}>{values.sets}</Text>
             </View>
             <View style={styles.valueRow}>
-              <Text style={styles.valueLabel}>Work</Text>
+              <Text style={styles.valueLabel}>{t('savePresetModal.labels.work')}</Text>
               <Text style={styles.valueText}>{formatTime(values.workTime)}</Text>
             </View>
             <View style={styles.valueRow}>
-              <Text style={styles.valueLabel}>Rest</Text>
+              <Text style={styles.valueLabel}>{t('savePresetModal.labels.rest')}</Text>
               <Text style={styles.valueText}>{formatTime(values.restTime)}</Text>
             </View>
           </View>
 
           <TextInput
             style={styles.input}
-            placeholder="Enter preset name"
+            placeholder={t('savePresetModal.placeholder')}
             placeholderTextColor="#888"
             value={name}
             onChangeText={setName}
@@ -57,14 +59,14 @@ export default function SavePresetModal({ visible, values, onSave, onClose }: Sa
 
           <View style={styles.buttons}>
             <TouchableOpacity style={styles.cancelButton} onPress={handleClose}>
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t('savePresetModal.buttons.cancel')}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.saveButton, !name.trim() && styles.saveButtonDisabled]}
               onPress={handleSave}
               disabled={!name.trim()}
             >
-              <Text style={styles.saveButtonText}>Save</Text>
+              <Text style={styles.saveButtonText}>{t('savePresetModal.buttons.save')}</Text>
             </TouchableOpacity>
           </View>
         </View>

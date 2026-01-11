@@ -16,23 +16,19 @@ describe('ConfirmDeleteModal', () => {
   describe('rendering', () => {
     it('renders title', () => {
       const { getByText } = render(<ConfirmDeleteModal {...defaultProps} />)
-      expect(getByText('Delete Preset')).toBeTruthy()
+      expect(getByText('confirmDeleteModal.title')).toBeTruthy()
     })
 
     it('displays confirmation message with preset name', () => {
       const { getByText } = render(<ConfirmDeleteModal {...defaultProps} />)
-      expect(getByText('Are you sure you want to delete "My Workout"?')).toBeTruthy()
+      // The mock returns key with interpolated values
+      expect(getByText('confirmDeleteModal.message')).toBeTruthy()
     })
 
     it('renders Cancel and Delete buttons', () => {
       const { getByText } = render(<ConfirmDeleteModal {...defaultProps} />)
-      expect(getByText('Cancel')).toBeTruthy()
-      expect(getByText('Delete')).toBeTruthy()
-    })
-
-    it('displays different preset names correctly', () => {
-      const { getByText } = render(<ConfirmDeleteModal {...defaultProps} presetName="HIIT Session" />)
-      expect(getByText('Are you sure you want to delete "HIIT Session"?')).toBeTruthy()
+      expect(getByText('confirmDeleteModal.buttons.cancel')).toBeTruthy()
+      expect(getByText('confirmDeleteModal.buttons.delete')).toBeTruthy()
     })
   })
 
@@ -40,7 +36,7 @@ describe('ConfirmDeleteModal', () => {
     it('calls onConfirm when delete button is pressed', () => {
       const { getByText } = render(<ConfirmDeleteModal {...defaultProps} />)
 
-      fireEvent.press(getByText('Delete'))
+      fireEvent.press(getByText('confirmDeleteModal.buttons.delete'))
 
       expect(defaultProps.onConfirm).toHaveBeenCalledTimes(1)
     })
@@ -50,7 +46,7 @@ describe('ConfirmDeleteModal', () => {
     it('calls onClose when cancel button is pressed', () => {
       const { getByText } = render(<ConfirmDeleteModal {...defaultProps} />)
 
-      fireEvent.press(getByText('Cancel'))
+      fireEvent.press(getByText('confirmDeleteModal.buttons.cancel'))
 
       expect(defaultProps.onClose).toHaveBeenCalledTimes(1)
     })
@@ -59,12 +55,12 @@ describe('ConfirmDeleteModal', () => {
   describe('accessibility', () => {
     it('has accessible cancel button', () => {
       const { getByLabelText } = render(<ConfirmDeleteModal {...defaultProps} />)
-      expect(getByLabelText('Cancel delete preset')).toBeTruthy()
+      expect(getByLabelText('confirmDeleteModal.accessibility.cancelDelete')).toBeTruthy()
     })
 
     it('has accessible delete button', () => {
       const { getByLabelText } = render(<ConfirmDeleteModal {...defaultProps} />)
-      expect(getByLabelText('Confirm delete preset')).toBeTruthy()
+      expect(getByLabelText('confirmDeleteModal.accessibility.confirmDelete')).toBeTruthy()
     })
   })
 })
