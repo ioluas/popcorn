@@ -65,6 +65,14 @@ export type TranslationKeys = {
         ar: string
       }
     }
+    volume: {
+      label: string
+    }
+    colors: {
+      workBackground: string
+      restBackground: string
+      reset: string
+    }
   }
   common: {
     restartRequired: string
@@ -76,7 +84,7 @@ export type TranslationKeys = {
   }
 }
 
-export { LANGUAGE_STORAGE_KEY } from '@/i18n/utils/languageStorage'
+export const LANGUAGE_STORAGE_KEY = 'poptimer:language'
 
 export const SUPPORTED_LANGUAGES = ['en', 'sv', 'ar'] as const
 export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number]

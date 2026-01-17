@@ -12,6 +12,14 @@ export { SUPPORTED_LANGUAGES, type SupportedLanguage } from './types'
 export { isRTL, applyRTL, needsRTLRestart } from './rtl'
 export { getSavedLanguage, saveLanguage } from './utils/languageStorage'
 
+/**
+ * Initializes and configures the i18n instance for internationalization support.
+ *
+ * This method sets up the supported translations, determines the appropriate language to use
+ * based on saved preferences or device locale, and configures i18n with the necessary settings.
+ *
+ * @return {Promise<typeof i18n>} A promise that resolves to the configured i18n instance.
+ */
 export async function initI18n(): Promise<typeof i18n> {
   // Check for saved language preference first
   const savedLanguage = await getSavedLanguage()

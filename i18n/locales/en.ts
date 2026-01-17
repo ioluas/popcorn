@@ -3,8 +3,8 @@ import { TranslationKeys } from '../types'
 const en: TranslationKeys = {
   timer: {
     phases: {
-      work: 'WORK',
-      rest: 'REST',
+      work: 'Work',
+      rest: 'Rest',
       complete: 'Complete!',
     },
     setProgress: 'Set {{current}} / {{total}}',
@@ -66,6 +66,14 @@ const en: TranslationKeys = {
         sv: 'Svenska',
         ar: 'العربية',
       },
+    },
+    volume: {
+      label: 'Volume',
+    },
+    colors: {
+      workBackground: 'Work Background',
+      restBackground: 'Rest Background',
+      reset: 'Reset',
     },
   },
   common: {

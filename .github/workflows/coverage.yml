@@ -1,11 +1,12 @@
-name: CI
+name: TestCoverage
 
 on:
   push:
+    branches: [main]
 
 jobs:
-  checks:
-    name: Format, Lint, Test & Expo Doctor
+  test:
+    name: Tests Coverage
     runs-on: ubuntu-latest
 
     steps:
@@ -21,17 +22,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      - name: Check formatting
-        run: npx prettier --check .
-
-      - name: Lint
-        run: npm run lint
-
-      - name: Type check
-        run: npm run typecheck
-
       - name: Test with coverage
-        run: npm run test:coverage
+        run: npm test:coverage
 
-      - name: Expo Doctor
-        run: npx expo-doctor
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: ./coverage/lcov.info

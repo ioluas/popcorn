@@ -41,15 +41,15 @@ export default function Page() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={{ paddingHorizontal: 16 }}>
+        <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
+      </View>
+
       <View style={styles.header}>
         <View style={styles.headerSpacer} />
         <TouchableOpacity style={styles.settingsButton} onPress={() => router.push('/settings')}>
           <Ionicons name="settings-outline" size={24} color="#b0bec5" />
         </TouchableOpacity>
-      </View>
-
-      <View style={{ paddingHorizontal: 16 }}>
-        <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
       </View>
 
       <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>

@@ -1,6 +1,7 @@
-# Timer
+# PopTimer
 
 [![CI](https://github.com/ioluas/popcorn/actions/workflows/ci.yml/badge.svg)](https://github.com/ioluas/popcorn/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/github/ioluas/popcorn/graph/badge.svg?token=DDTHW6QOBH)](https://codecov.io/github/ioluas/popcorn)
 
 A bespoke workout interval timer app built with React Native and Expo for my niece. Popcorn is the name of her pet cockatoo bird.
 

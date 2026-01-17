@@ -24,6 +24,7 @@ interface UseTimerReturn {
   pause: () => void
   toggle: () => void
   reset: () => void
+  skip: () => void
 }
 
 export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOptions): UseTimerReturn {
@@ -82,7 +83,7 @@ export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOpt
         if (prev.currentSet < prev.totalSets) {
           return { ...prev, currentSet: prev.currentSet + 1, phase: 'work', timeRemaining: workTime }
         }
-        return { ...prev, phase: 'complete', isPlaying: false }
+        return { ...prev, phase: 'complete', isPlaying: false, timeRemaining: 0 }
       })
     }, 1000)
 
@@ -115,5 +116,26 @@ export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOpt
     })
   }, [sets, workTime])
 
-  return { state, play, pause, toggle, reset }
+  const skip = useCallback(() => {
+    // Manually trigger haptics/sound via onTransition
+    if (state.phase === 'work') {
+      onTransitionRef.current?.('work_to_rest')
+    } else if (state.currentSet < state.totalSets) {
+      onTransitionRef.current?.('rest_to_work')
+    } else {
+      onTransitionRef.current?.('complete')
+    }
+
+    setState((prev) => {
+      if (prev.phase === 'work') {
+        return { ...prev, phase: 'rest', timeRemaining: restTime }
+      }
+      if (prev.currentSet < prev.totalSets) {
+        return { ...prev, currentSet: prev.currentSet + 1, phase: 'work', timeRemaining: workTime }
+      }
+      return { ...prev, phase: 'complete', isPlaying: false }
+    })
+  }, [state.phase, state.currentSet, state.totalSets, restTime, workTime])
+
+  return { state, play, pause, toggle, reset, skip }
 }
