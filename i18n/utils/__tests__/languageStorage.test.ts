@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { getSavedLanguage, saveLanguage, clearLanguage, LANGUAGE_STORAGE_KEY } from '../languageStorage'
+import { getSavedLanguage, saveLanguage, clearLanguage } from '../languageStorage'
+import { LANGUAGE_STORAGE_KEY } from '../../types'
 
 describe('languageStorage', () => {
   afterEach(async () => {
