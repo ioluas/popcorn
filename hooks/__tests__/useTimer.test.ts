@@ -283,35 +283,36 @@ describe('useTimer', () => {
 
   describe('useEffect cleanup', () => {
     it('clears interval when hook unmounts while playing', () => {
-      const { result, unmount } = renderHook(() => useTimer({ sets: 1, workTime: 5, restTime: 5 }));
+      const { result, unmount } = renderHook(() => useTimer({ sets: 1, workTime: 5, restTime: 5 }))
 
       // Timer is playing by default
-      expect(result.current.state.isPlaying).toBe(true);
+      expect(result.current.state.isPlaying).toBe(true)
 
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval'); // Changed window to global
-      
-      unmount();
+      const clearIntervalSpy = jest.spyOn(global, 'clearInterval') // Changed window to global
 
-      expect(clearIntervalSpy).toHaveBeenCalled();
-      clearIntervalSpy.mockRestore(); // Clean up the spy
-    });
+      unmount()
 
-    it('clears interval when timer completes', () => { // Renamed test
-      const { result } = renderHook(() => useTimer({ sets: 1, workTime: 1, restTime: 1 }));
+      expect(clearIntervalSpy).toHaveBeenCalled()
+      clearIntervalSpy.mockRestore() // Clean up the spy
+    })
 
-      const clearIntervalSpy = jest.spyOn(global, 'clearInterval'); // Changed window to global
+    it('clears interval when timer completes', () => {
+      // Renamed test
+      const { result } = renderHook(() => useTimer({ sets: 1, workTime: 1, restTime: 1 }))
+
+      const clearIntervalSpy = jest.spyOn(global, 'clearInterval') // Changed window to global
 
       act(() => {
-        jest.advanceTimersByTime(6000); // Advance enough to complete work and rest (1s work, 1s rest + 2s delay)
-      });
-      expect(result.current.state.phase).toBe('complete');
+        jest.advanceTimersByTime(6000) // Advance enough to complete work and rest (1s work, 1s rest + 2s delay)
+      })
+      expect(result.current.state.phase).toBe('complete')
 
       // Expect clearInterval to be called when the timer completes (due to useEffect logic)
-      expect(clearIntervalSpy).toHaveBeenCalled();
-      clearIntervalSpy.mockRestore();
-    });
+      expect(clearIntervalSpy).toHaveBeenCalled()
+      clearIntervalSpy.mockRestore()
+    })
 
     // Removed the test for "clears interval when timer is paused and hook unmounts"
     // as it was asserting an incorrect behavior based on current useEffect logic.
-  });
+  })
 })
