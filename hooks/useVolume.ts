@@ -28,7 +28,7 @@ const DEFAULT_VOLUME = 1.0
  * @return {boolean} Returns true if the value is between 0 and 1 (inclusive), otherwise false.
  */
 function isValidVolume(value: number): boolean {
-  return value >= 0 && value <= 1
+  return Number.isFinite(value) && value >= 0 && value <= 1
 }
 
 export type UseVolumeReturn = {
@@ -58,7 +58,7 @@ export function useVolume(): UseVolumeReturn {
         const saved = await AsyncStorage.getItem(VOLUME_STORAGE_KEY)
         if (saved !== null) {
           const parsed = parseFloat(saved)
-          if (!isNaN(parsed) && isValidVolume(parsed)) {
+          if (isValidVolume(parsed)) {
             setVolumeState(parsed)
           }
         }
@@ -72,7 +72,8 @@ export function useVolume(): UseVolumeReturn {
   }, [])
 
   const setVolume = useCallback(async (newVolume: number) => {
-    const clampedVolume = Math.max(0, Math.min(1, newVolume))
+    const finiteVolume = Number.isFinite(newVolume) ? newVolume : 0
+    const clampedVolume = Math.max(0, Math.min(1, finiteVolume))
     setVolumeState(clampedVolume)
     try {
       await AsyncStorage.setItem(VOLUME_STORAGE_KEY, clampedVolume.toString())

@@ -18,8 +18,9 @@ const PRESETS_STORAGE_KEY = 'poptimer:presets'
  * @return {string} A string representing the time in MM:SS format, where MM is minutes and SS is seconds.
  */
 function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60)
-  const secs = seconds % 60
+  const integerSeconds = Math.max(0, Math.floor(seconds))
+  const mins = Math.floor(integerSeconds / 60)
+  const secs = integerSeconds % 60
   return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
 }
 
