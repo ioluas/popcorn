@@ -64,3 +64,36 @@ jest.mock('@/i18n', () => ({
     init: jest.fn().mockResolvedValue(undefined),
   },
 }))
+
+jest.mock('react-native-reanimated', () => {
+  const { View } = require('react-native')
+  return {
+    default: {
+      View,
+      call: () => {},
+    },
+    View,
+    useSharedValue: jest.fn((init) => ({ value: init })),
+    useAnimatedStyle: jest.fn(() => ({})),
+    withTiming: jest.fn((toValue) => toValue),
+    withSequence: jest.fn((...args) => args[args.length - 1]),
+    withDelay: jest.fn((_, animation) => animation),
+    Easing: {
+      linear: jest.fn(),
+      ease: jest.fn(),
+      inOut: jest.fn(() => jest.fn()),
+    },
+  }
+})
+
+jest.mock('react-native-worklets', () => ({
+  scheduleOnRN: jest.fn((fn) => fn()),
+}))
+
+jest.mock('expo-audio', () => ({
+  useAudioPlayer: jest.fn(() => ({
+    play: jest.fn(),
+    pause: jest.fn(),
+    seekTo: jest.fn(),
+  })),
+}))
