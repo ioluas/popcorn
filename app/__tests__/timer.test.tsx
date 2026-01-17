@@ -19,6 +19,7 @@ jest.mock('expo-haptics', () => ({
 
 const mockToggle = jest.fn()
 const mockReset = jest.fn()
+const mockSkip = jest.fn()
 const mockUseTimer = jest.fn()
 
 jest.mock('@/hooks/useTimer', () => ({
@@ -27,6 +28,21 @@ jest.mock('@/hooks/useTimer', () => ({
 
 jest.mock('@/hooks/useSounds', () => ({
   useSounds: () => ({ playBeep: jest.fn() }),
+}))
+
+jest.mock('@/hooks/useVolume', () => ({
+  useVolume: () => ({ volume: 1, setVolume: jest.fn(), isLoading: false }),
+}))
+
+jest.mock('@/hooks/useTimerColors', () => ({
+  useTimerColors: () => ({
+    workBgColor: null,
+    restBgColor: null,
+    setWorkBgColor: jest.fn(),
+    setRestBgColor: jest.fn(),
+    isLoading: false,
+  }),
+  DEFAULT_BG_COLOR: '#242424',
 }))
 
 describe('TimerPage', () => {
@@ -44,6 +60,7 @@ describe('TimerPage', () => {
       },
       toggle: mockToggle,
       reset: mockReset,
+      skip: mockSkip,
     })
   })
 
@@ -214,6 +231,14 @@ describe('TimerPage', () => {
       expect(mockReset).toHaveBeenCalled()
     })
 
+    it('calls skip when skip button is pressed', () => {
+      const { getByText } = render(<TimerPage />)
+
+      fireEvent.press(getByText('play-skip-forward'))
+
+      expect(mockSkip).toHaveBeenCalled()
+    })
+
     it('shows play icon when paused', () => {
       mockUseTimer.mockReturnValue({
         state: { phase: 'work', currentSet: 1, totalSets: 3, timeRemaining: 30, isPlaying: false },
@@ -250,6 +275,7 @@ describe('TimerPage', () => {
       expect(queryByText('pause')).toBeNull()
       expect(queryByText('play')).toBeNull()
       expect(queryByText('refresh')).toBeNull()
+      expect(queryByText('play-skip-forward')).toBeNull()
     })
   })
 

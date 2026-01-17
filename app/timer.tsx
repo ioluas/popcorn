@@ -6,6 +6,8 @@ import * as Haptics from 'expo-haptics'
 import { useTranslation } from 'react-i18next'
 import { useTimer, TransitionType } from '@/hooks/useTimer'
 import { useSounds } from '@/hooks/useSounds'
+import { useVolume } from '@/hooks/useVolume'
+import { useTimerColors, DEFAULT_BG_COLOR } from '@/hooks/useTimerColors'
 import { formatTime } from '@/utils/General'
 
 type TimerProps = {
@@ -17,7 +19,9 @@ type TimerProps = {
 function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
   const { t } = useTranslation()
   const router = useRouter()
-  const { playBeep } = useSounds()
+  const { volume } = useVolume()
+  const { playBeep } = useSounds(volume)
+  const { workBgColor, restBgColor } = useTimerColors()
 
   const handleTransition = useCallback(
     (_type: TransitionType) => {
@@ -26,7 +30,7 @@ function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
     [playBeep]
   )
 
-  const { state, toggle, reset } = useTimer({
+  const { state, toggle, reset, skip } = useTimer({
     sets,
     workTime,
     restTime,
@@ -50,8 +54,15 @@ function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
         : t('timer.phases.complete')
   const phaseColor = state.phase === 'work' ? '#e8d44d' : state.phase === 'rest' ? '#5d9cec' : '#2ecc71'
 
+  const backgroundColor =
+    state.phase === 'work'
+      ? (workBgColor ?? DEFAULT_BG_COLOR)
+      : state.phase === 'rest'
+        ? (restBgColor ?? DEFAULT_BG_COLOR)
+        : DEFAULT_BG_COLOR
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <Text style={[styles.phaseLabel, { color: phaseColor }]}>{phaseLabel}</Text>
 
       <Text style={styles.countdown}>{formatTime(Math.max(0, state.timeRemaining))}</Text>
@@ -67,6 +78,9 @@ function TimerScreen({ sets, workTime, restTime }: TimerProps): JSX.Element {
           </TouchableOpacity>
           <TouchableOpacity onPress={reset} style={styles.controlButton}>
             <Ionicons name="refresh" size={32} color="#fff" />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={skip} style={styles.controlButton}>
+            <Ionicons name="play-skip-forward" size={32} color="#fff" />
           </TouchableOpacity>
         </View>
       )}
@@ -211,6 +225,7 @@ const styles = StyleSheet.create({
   },
   controls: {
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: 32,
     marginTop: 48,
   },

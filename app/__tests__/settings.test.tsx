@@ -8,6 +8,11 @@ jest.mock('expo-router', () => ({
   useRouter: () => mockRouter,
 }))
 
+const mockSetVolume = jest.fn()
+const mockPlayBeep = jest.fn()
+const mockSetWorkBgColor = jest.fn()
+const mockSetRestBgColor = jest.fn()
+
 const mockChangeLanguage = jest.fn().mockResolvedValue(undefined)
 const mockI18n = {
   language: 'en',
@@ -31,6 +36,43 @@ jest.mock('@/i18n', () => ({
   needsRTLRestart: (lang: string) => mockNeedsRTLRestart(lang),
   applyRTL: (lang: string) => mockApplyRTL(lang),
 }))
+
+jest.mock('@/hooks/useVolume', () => ({
+  useVolume: () => ({ volume: 1, setVolume: mockSetVolume, isLoading: false }),
+}))
+
+jest.mock('@/hooks/useSounds', () => ({
+  useSounds: () => ({ playBeep: mockPlayBeep }),
+}))
+
+jest.mock('@/hooks/useTimerColors', () => ({
+  useTimerColors: () => ({
+    workBgColor: null,
+    restBgColor: null,
+    setWorkBgColor: mockSetWorkBgColor,
+    setRestBgColor: mockSetRestBgColor,
+    isLoading: false,
+  }),
+  DEFAULT_BG_COLOR: '#242424',
+}))
+
+jest.mock('@react-native-community/slider', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react')
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const RN = require('react-native')
+  // A pressable mock that simulates a slide
+  return {
+    __esModule: true,
+    default: (props: { onValueChange: (v: number) => void; onSlidingComplete: () => void }) => {
+      const handlePress = () => {
+        props.onValueChange(0.5)
+        props.onSlidingComplete()
+      }
+      return React.createElement(RN.Pressable, { testID: 'volume-slider', onPress: handlePress })
+    },
+  }
+})
 
 jest.mock('@/components/RestartConfirmModal', () => {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -90,15 +132,15 @@ describe('SettingsPage', () => {
       expect(getByText('العربية')).toBeTruthy()
     })
 
-    it('shows checkmark only on current language', () => {
+    it('shows checkmark on current language', () => {
       mockI18n.language = 'sv'
       const { getAllByText } = render(<SettingsPage />)
 
       // Ionicons mock renders icon name as text content
-      // Only one checkmark should be rendered (for the selected language)
+      // Multiple checkmarks exist (language + color swatches), just verify at least one exists
       const checkmarks = getAllByText('checkmark')
 
-      expect(checkmarks).toHaveLength(1)
+      expect(checkmarks.length).toBeGreaterThanOrEqual(1)
     })
   })
 
@@ -211,6 +253,67 @@ describe('SettingsPage', () => {
         expect(mockChangeLanguage).toHaveBeenCalledWith('ar')
         expect(mockApplyRTL).toHaveBeenCalledWith('ar')
       })
+    })
+  })
+
+  describe('volume control', () => {
+    it('renders the volume slider', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      expect(getByTestId('volume-slider')).toBeTruthy()
+    })
+
+    it('calls setVolume and playBeep on slider change', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      const slider = getByTestId('volume-slider')
+
+      fireEvent.press(slider)
+
+      expect(mockSetVolume).toHaveBeenCalledWith(0.5)
+      expect(mockPlayBeep).toHaveBeenCalled()
+    })
+  })
+
+  describe('color selection', () => {
+    it('renders work and rest color sections', () => {
+      const { getByText } = render(<SettingsPage />)
+      expect(getByText('settings.colors.workBackground')).toBeTruthy()
+      expect(getByText('settings.colors.restBackground')).toBeTruthy()
+    })
+
+    it('calls setWorkBgColor when a work color is selected', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      const colorSwatch = getByTestId('work-color-swatch-#FF6B35')
+
+      fireEvent.press(colorSwatch)
+
+      expect(mockSetWorkBgColor).toHaveBeenCalledWith('#FF6B35')
+    })
+
+    it('calls setRestBgColor when a rest color is selected', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      const colorSwatch = getByTestId('rest-color-swatch-#2ECC71')
+
+      fireEvent.press(colorSwatch)
+
+      expect(mockSetRestBgColor).toHaveBeenCalledWith('#2ECC71')
+    })
+
+    it('calls setWorkBgColor with null when default color is selected', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      const colorSwatch = getByTestId('work-color-swatch-#242424')
+
+      fireEvent.press(colorSwatch)
+
+      expect(mockSetWorkBgColor).toHaveBeenCalledWith(null)
+    })
+
+    it('calls setRestBgColor with null when default color is selected', () => {
+      const { getByTestId } = render(<SettingsPage />)
+      const colorSwatch = getByTestId('rest-color-swatch-#242424')
+
+      fireEvent.press(colorSwatch)
+
+      expect(mockSetRestBgColor).toHaveBeenCalledWith(null)
     })
   })
 })

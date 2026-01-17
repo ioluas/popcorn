@@ -67,6 +67,14 @@ const ar: TranslationKeys = {
         ar: 'العربية',
       },
     },
+    volume: {
+      label: 'مستوى الصوت',
+    },
+    colors: {
+      workBackground: 'خلفية التمرين',
+      restBackground: 'خلفية الراحة',
+      reset: 'إعادة تعيين',
+    },
   },
   common: {
     restartRequired: 'يجب إعادة التشغيل',

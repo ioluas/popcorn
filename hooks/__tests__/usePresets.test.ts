@@ -2,6 +2,8 @@ import { renderHook, act, waitFor } from '@testing-library/react-native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { usePresets } from '../usePresets'
 
+const PRESETS_STORAGE_KEY = 'poptimer:presets'
+
 describe('usePresets', () => {
   beforeEach(async () => {
     await AsyncStorage.clear()
@@ -20,7 +22,7 @@ describe('usePresets', () => {
 
   it('loads existing presets from storage', async () => {
     const existingPresets = [{ id: '1', name: 'Test', sets: 3, workTime: 30, restTime: 10, createdAt: 123 }]
-    await AsyncStorage.setItem('timer_presets', JSON.stringify(existingPresets))
+    await AsyncStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(existingPresets))
 
     const { result } = renderHook(() => usePresets())
 
@@ -49,7 +51,7 @@ describe('usePresets', () => {
     expect(result.current.presets[0]!.restTime).toBe(15)
 
     // Verify persisted to storage
-    const stored = await AsyncStorage.getItem('timer_presets')
+    const stored = await AsyncStorage.getItem(PRESETS_STORAGE_KEY)
     expect(JSON.parse(stored!)).toHaveLength(1)
   })
 
@@ -58,7 +60,7 @@ describe('usePresets', () => {
       { id: '1', name: 'Preset 1', sets: 3, workTime: 30, restTime: 10, createdAt: 123 },
       { id: '2', name: 'Preset 2', sets: 5, workTime: 45, restTime: 15, createdAt: 456 },
     ]
-    await AsyncStorage.setItem('timer_presets', JSON.stringify(existingPresets))
+    await AsyncStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(existingPresets))
 
     const { result } = renderHook(() => usePresets())
 
@@ -74,7 +76,7 @@ describe('usePresets', () => {
     expect(result.current.presets[0]!.id).toBe('2')
 
     // Verify persisted to storage
-    const stored = await AsyncStorage.getItem('timer_presets')
+    const stored = await AsyncStorage.getItem(PRESETS_STORAGE_KEY)
     expect(JSON.parse(stored!)).toHaveLength(1)
   })
 })

@@ -23,8 +23,11 @@ describe('formatTime', () => {
   })
 })
 
+const PRESETS_STORAGE_KEY = 'poptimer:presets'
+
 describe('loadPresetsFromStorage', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await AsyncStorage.clear()
     jest.clearAllMocks()
   })
 
@@ -35,7 +38,7 @@ describe('loadPresetsFromStorage', () => {
 
   it('returns stored presets', async () => {
     const presets: Preset[] = [{ id: '1', name: 'Test', sets: 3, workTime: 30, restTime: 10, createdAt: 123 }]
-    await AsyncStorage.setItem('timer_presets', JSON.stringify(presets))
+    await AsyncStorage.setItem(PRESETS_STORAGE_KEY, JSON.stringify(presets))
 
     const result = await loadPresetsFromStorage()
     expect(result).toEqual(presets)
@@ -54,7 +57,8 @@ describe('loadPresetsFromStorage', () => {
 })
 
 describe('persistPresetsToStorage', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
+    await AsyncStorage.clear()
     jest.clearAllMocks()
   })
 
@@ -63,14 +67,14 @@ describe('persistPresetsToStorage', () => {
 
     await persistPresetsToStorage(presets)
 
-    const stored = await AsyncStorage.getItem('timer_presets')
+    const stored = await AsyncStorage.getItem(PRESETS_STORAGE_KEY)
     expect(JSON.parse(stored!)).toEqual(presets)
   })
 
   it('saves empty array', async () => {
     await persistPresetsToStorage([])
 
-    const stored = await AsyncStorage.getItem('timer_presets')
+    const stored = await AsyncStorage.getItem(PRESETS_STORAGE_KEY)
     expect(JSON.parse(stored!)).toEqual([])
   })
 

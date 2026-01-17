@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "timer",
-    "slug": "timer",
+    "name": "PopTimer",
+    "slug": "pop-timer",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/PopTimer.png",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "ios": {
@@ -18,12 +18,12 @@
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"],
-      "package": "me.popcorn.timer"
+      "package": "me.ioluas.pop.timer"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "scheme": "timer",
+    "scheme": "poptimer",
     "plugins": ["expo-router", "expo-audio"],
     "extra": {
       "router": {},

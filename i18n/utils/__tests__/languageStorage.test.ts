@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import { getSavedLanguage, saveLanguage, clearLanguage } from '../languageStorage'
+import { getSavedLanguage, saveLanguage, clearLanguage, LANGUAGE_STORAGE_KEY } from '../languageStorage'
 
 describe('languageStorage', () => {
   afterEach(async () => {
@@ -9,7 +9,7 @@ describe('languageStorage', () => {
 
   describe('getSavedLanguage', () => {
     it('should return the saved language if it exists', async () => {
-      await AsyncStorage.setItem('timer_language', 'sv')
+      await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'sv')
       const language = await getSavedLanguage()
       expect(language).toBe('sv')
     })
@@ -34,7 +34,7 @@ describe('languageStorage', () => {
   describe('saveLanguage', () => {
     it('should save the language to AsyncStorage', async () => {
       await saveLanguage('ar')
-      const saved = await AsyncStorage.getItem('timer_language')
+      const saved = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
       expect(saved).toBe('ar')
     })
 
@@ -51,9 +51,9 @@ describe('languageStorage', () => {
 
   describe('clearLanguage', () => {
     it('should remove the language from AsyncStorage', async () => {
-      await AsyncStorage.setItem('timer_language', 'sv')
+      await AsyncStorage.setItem(LANGUAGE_STORAGE_KEY, 'sv')
       await clearLanguage()
-      const saved = await AsyncStorage.getItem('timer_language')
+      const saved = await AsyncStorage.getItem(LANGUAGE_STORAGE_KEY)
       expect(saved).toBeNull()
     })
 
