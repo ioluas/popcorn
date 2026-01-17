@@ -58,8 +58,8 @@ export default function CockatooAnimation({ isPlaying, onComplete }: CockatooAni
       translateY.value = height
 
       void cockatooPlayer.seekTo(0)
-      cockatooPlayer.play()
       cockatooPlayer.volume = volume
+      cockatooPlayer.play()
 
       translateX.value = withTiming(width, {
         duration: ANIMATION_DURATION,

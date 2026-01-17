@@ -1,23 +1,24 @@
 import { render, waitFor, act } from '@testing-library/react-native'
 import CockatooAnimation from '../CockatooAnimation'
-import { useVolume } from '../../hooks/useVolume' // Import the actual hook to mock it
+import { useVolume } from '@/hooks/useVolume' // Import the actual hook to mock it
 
 const mockPlay = jest.fn()
 const mockSeekTo = jest.fn()
-const mockStop = jest.fn()
+const mockPause = jest.fn() // New mock for pause
 const mockSetVolume = jest.fn()
 
 jest.mock('expo-audio', () => ({
   useAudioPlayer: jest.fn(() => ({
     play: mockPlay,
     seekTo: mockSeekTo,
-    stop: mockStop,
+    pause: mockPause, // Changed from stop to pause
     set volume(value: number) {
       mockSetVolume(value)
     },
-    get isPlaying() {
-      // Simplistic mock: consider it playing if play was called more recently than stop
-      return mockPlay.mock.calls.length > mockStop.mock.calls.length
+    get playing() {
+      // Changed from isPlaying to playing
+      // Simplistic mock: consider it playing if play was called more recently than pause
+      return mockPlay.mock.calls.length > mockPause.mock.calls.length
     },
   })),
 }))
@@ -38,7 +39,7 @@ describe('CockatooAnimation', () => {
   }
 
   beforeEach(() => {
-    jest.clearAllMocks() // Corrected line
+    jest.clearAllMocks()
     // Reset the mock for useVolume before each test to its default state
     ;(useVolume as jest.Mock).mockReturnValue({
       volume: 1.0,
