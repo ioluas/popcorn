@@ -83,7 +83,7 @@ export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOpt
         if (prev.currentSet < prev.totalSets) {
           return { ...prev, currentSet: prev.currentSet + 1, phase: 'work', timeRemaining: workTime }
         }
-        return { ...prev, phase: 'complete', isPlaying: false, timeRemaining: 0 }
+        return { ...prev, phase: 'complete', isPlaying: false, timeRemaining: 0 } // Fix: Added timeRemaining: 0
       })
     }, 1000)
 
@@ -133,7 +133,7 @@ export function useTimer({ sets, workTime, restTime, onTransition }: UseTimerOpt
       if (prev.currentSet < prev.totalSets) {
         return { ...prev, currentSet: prev.currentSet + 1, phase: 'work', timeRemaining: workTime }
       }
-      return { ...prev, phase: 'complete', isPlaying: false }
+      return { ...prev, phase: 'complete', isPlaying: false, timeRemaining: 0 } // Fix: Added timeRemaining: 0
     })
   }, [state.phase, state.currentSet, state.totalSets, restTime, workTime])
 

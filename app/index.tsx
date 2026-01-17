@@ -6,7 +6,9 @@ import { Ionicons } from '@expo/vector-icons'
 import Quickstart, { PresetValues } from '@/components/Quickstart'
 import Presets from '@/components/Presets'
 import SavePresetModal from '@/components/SavePresetModal'
+import CockatooAnimation from '@/components/CockatooAnimation'
 import { usePresets } from '@/hooks/usePresets'
+import { useCockatoo } from '@/hooks/useCockatoo'
 
 export default function Page() {
   const router = useRouter()
@@ -17,6 +19,7 @@ export default function Page() {
   })
   const [showSaveModal, setShowSaveModal] = useState(false)
   const { presets, savePreset, deletePreset } = usePresets()
+  const { isAnimationPlaying, onAnimationComplete } = useCockatoo(presetValues.workTime)
 
   const handleStart = (values?: PresetValues) => {
     const { sets, workTime, restTime } = values ?? presetValues
@@ -41,6 +44,7 @@ export default function Page() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <CockatooAnimation isPlaying={isAnimationPlaying} onComplete={onAnimationComplete} />
       <View style={{ paddingHorizontal: 16 }}>
         <Quickstart values={presetValues} onChange={setPresetValues} onStart={handleStart} onSave={handleSave} />
       </View>

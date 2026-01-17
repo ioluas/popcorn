@@ -173,54 +173,76 @@ jest.mock('@/components/SavePresetModal', () => {
   }
 })
 
+// Mock CockatooAnimation to prevent its internal asynchronous logic from running
+jest.mock('@/components/CockatooAnimation', () => {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const React = require('react')
+  return {
+    __esModule: true,
+    default: function MockCockatooAnimation() {
+      return React.createElement(React.Fragment, null) // Render nothing
+    },
+  }
+})
+
 describe('Page (index)', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
   describe('rendering', () => {
-    it('renders Quickstart component', () => {
+    it('renders Quickstart component', async () => {
+      // Make async because of implicit act needed after render due to usePresets
       const { getByTestId } = render(<Page />)
+      // Allow any promises from hooks to resolve
+      await waitFor(() => {})
       expect(getByTestId('quickstart')).toBeTruthy()
     })
 
-    it('renders Presets component', () => {
+    it('renders Presets component', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
       expect(getByTestId('presets')).toBeTruthy()
     })
 
-    it('does not show SavePresetModal by default', () => {
+    it('does not show SavePresetModal by default', async () => {
       const { queryByTestId } = render(<Page />)
+      await waitFor(() => {})
       expect(queryByTestId('save-modal')).toBeNull()
     })
 
-    it('renders presets from usePresets hook', () => {
+    it('renders presets from usePresets hook', async () => {
       const { getByText } = render(<Page />)
+      await waitFor(() => {})
       expect(getByText('Quick HIIT')).toBeTruthy()
       expect(getByText('Long Sets')).toBeTruthy()
     })
   })
 
   describe('default preset values', () => {
-    it('has default sets of 3', () => {
+    it('has default sets of 3', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
       expect(getByTestId('quickstart-sets').props.children).toBe(3)
     })
 
-    it('has default workTime of 60', () => {
+    it('has default workTime of 60', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
       expect(getByTestId('quickstart-workTime').props.children).toBe(60)
     })
 
-    it('has default restTime of 30', () => {
+    it('has default restTime of 30', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
       expect(getByTestId('quickstart-restTime').props.children).toBe(30)
     })
   })
 
   describe('handleStart', () => {
-    it('navigates to timer with current values when Start is pressed', () => {
+    it('navigates to timer with current values when Start is pressed', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-start'))
 
@@ -234,8 +256,9 @@ describe('Page (index)', () => {
       })
     })
 
-    it('navigates to timer with updated values after onChange', () => {
+    it('navigates to timer with updated values after onChange', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-change'))
       fireEvent.press(getByTestId('quickstart-start'))
@@ -250,8 +273,9 @@ describe('Page (index)', () => {
       })
     })
 
-    it('navigates to timer with preset values when preset Start is pressed', () => {
+    it('navigates to timer with preset values when preset Start is pressed', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('preset-start-1'))
 
@@ -267,8 +291,9 @@ describe('Page (index)', () => {
   })
 
   describe('preset selection', () => {
-    it('updates preset values when a preset is selected', () => {
+    it('updates preset values when a preset is selected', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('preset-select-1'))
 
@@ -279,8 +304,9 @@ describe('Page (index)', () => {
   })
 
   describe('preset deletion', () => {
-    it('calls deletePreset when delete is pressed', () => {
+    it('calls deletePreset when delete is pressed', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('preset-delete-1'))
 
@@ -289,8 +315,9 @@ describe('Page (index)', () => {
   })
 
   describe('save modal', () => {
-    it('shows SavePresetModal when Save is pressed', () => {
+    it('shows SavePresetModal when Save is pressed', async () => {
       const { getByTestId, queryByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       expect(queryByTestId('save-modal')).toBeNull()
 
@@ -299,8 +326,9 @@ describe('Page (index)', () => {
       expect(getByTestId('save-modal')).toBeTruthy()
     })
 
-    it('passes current values to SavePresetModal', () => {
+    it('passes current values to SavePresetModal', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-save'))
 
@@ -309,8 +337,9 @@ describe('Page (index)', () => {
       expect(getByTestId('modal-restTime').props.children).toBe(30)
     })
 
-    it('passes updated values to SavePresetModal after onChange', () => {
+    it('passes updated values to SavePresetModal after onChange', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-change'))
       fireEvent.press(getByTestId('quickstart-save'))
@@ -320,8 +349,9 @@ describe('Page (index)', () => {
       expect(getByTestId('modal-restTime').props.children).toBe(15)
     })
 
-    it('closes modal when close is pressed', () => {
+    it('closes modal when close is pressed', async () => {
       const { getByTestId, queryByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-save'))
       expect(getByTestId('save-modal')).toBeTruthy()
@@ -333,6 +363,7 @@ describe('Page (index)', () => {
     it('calls savePreset and closes modal when save is confirmed', async () => {
       mockSavePreset.mockResolvedValue(undefined)
       const { getByTestId, queryByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       fireEvent.press(getByTestId('quickstart-save'))
       fireEvent.press(getByTestId('modal-save'))
@@ -352,8 +383,9 @@ describe('Page (index)', () => {
   })
 
   describe('onChange callback', () => {
-    it('updates quickstart values when onChange is called', () => {
+    it('updates quickstart values when onChange is called', async () => {
       const { getByTestId } = render(<Page />)
+      await waitFor(() => {})
 
       expect(getByTestId('quickstart-sets').props.children).toBe(3)
 
