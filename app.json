@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "PopTimer",
-    "slug": "pop-timer",
+    "slug": "timer",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/PopTimer.png",
