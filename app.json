@@ -2,7 +2,7 @@
   "expo": {
     "name": "PopTimer",
     "slug": "timer",
-    "version": "0.1.2",
+    "version": "0.1.4",
     "orientation": "portrait",
     "icon": "./assets/PopTimer.png",
     "userInterfaceStyle": "dark",
@@ -19,9 +19,6 @@
       "predictiveBackGestureEnabled": false,
       "permissions": ["android.permission.MODIFY_AUDIO_SETTINGS"],
       "package": "me.ioluas.pop.timer"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
     },
     "scheme": "poptimer",
     "plugins": ["expo-router", "expo-audio"],

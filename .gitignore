@@ -40,5 +40,6 @@ yarn-error.*
 /ios
 /android
 
-# test coverage
+# test reports & coverage
+/reports
 /coverage
