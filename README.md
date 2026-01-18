@@ -4,7 +4,7 @@
 [![codecov](https://codecov.io/github/ioluas/popcorn/graph/badge.svg?token=DDTHW6QOBH)](https://codecov.io/github/ioluas/popcorn)
 
 A bespoke workout interval timer app built with React Native and Expo for my niece.
-Poptimer is inspired by Popcorn, her pet cockatoo bird.
+PopTimer is inspired by Popcorn, her pet cockatoo bird.
 
 ## Screenshots
 

@@ -36,7 +36,8 @@ interface CockatooAnimationProps {
  * @return A random position value within the valid range.
  */
 const getRandomPosition = (max: number, imageSize: number): number => {
-  return Math.random() * (max - imageSize)
+  const usable = Math.max(0, max - imageSize)
+  return Math.random() * usable
 }
 
 // noinspection BadExpressionStatementJS
@@ -104,11 +105,19 @@ export default function CockatooAnimation({ isPlaying, onComplete }: CockatooAni
       const dx = randomEndX - randomStartX
       const dy = randomEndY - randomStartY
       const distance = Math.sqrt(dx * dx + dy * dy)
-      const curveIntensity = distance * (0.3 + Math.random() * 0.4) // 30-70% of distance
 
-      // Perpendicular vector
-      const perpX = -dy / distance
-      const perpY = dx / distance
+      // Guard against division by zero when start and end positions are the same
+      let perpX = 0
+      let perpY = 0
+      let curveIntensity = 0
+
+      if (distance > 0) {
+        curveIntensity = distance * (0.3 + Math.random() * 0.4) // 30-70% of distance
+
+        // Perpendicular vector
+        perpX = -dy / distance
+        perpY = dx / distance
+      }
 
       // Randomly curve left or right
       const direction = Math.random() > 0.5 ? 1 : -1

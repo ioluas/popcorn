@@ -278,26 +278,29 @@ describe('SettingsPage', () => {
 
       // Mock __DEV__ to false to test the catch block
       const originalDev = global.__DEV__
-      global.__DEV__ = false
 
-      const { getByText, getByTestId } = render(<SettingsPage />)
+      try {
+        global.__DEV__ = false
 
-      fireEvent.press(getByText('العربية'))
+        const { getByText, getByTestId } = render(<SettingsPage />)
 
-      await waitFor(() => {
-        expect(getByTestId('restart-modal')).toBeTruthy()
-      })
+        fireEvent.press(getByText('العربية'))
 
-      fireEvent.press(getByTestId('restart-confirm'))
+        await waitFor(() => {
+          expect(getByTestId('restart-modal')).toBeTruthy()
+        })
 
-      await waitFor(() => {
-        expect(mockSaveLanguage).toHaveBeenCalledWith('ar')
-        expect(mockChangeLanguage).toHaveBeenCalledWith('ar')
-        expect(mockApplyRTL).toHaveBeenCalledWith('ar')
-      })
+        fireEvent.press(getByTestId('restart-confirm'))
 
-      // Restore __DEV__
-      global.__DEV__ = originalDev
+        await waitFor(() => {
+          expect(mockSaveLanguage).toHaveBeenCalledWith('ar')
+          expect(mockChangeLanguage).toHaveBeenCalledWith('ar')
+          expect(mockApplyRTL).toHaveBeenCalledWith('ar')
+        })
+      } finally {
+        // Restore __DEV__
+        global.__DEV__ = originalDev
+      }
     })
   })
 

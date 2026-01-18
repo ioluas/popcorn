@@ -395,4 +395,23 @@ describe('CockatooAnimation', () => {
     // Should create 7 shared values: progress, startX, startY, controlX, controlY, endX, endY
     expect(useSharedValueSpy.mock.calls.length).toBeGreaterThanOrEqual(initialCallCount + 7)
   })
+
+  it('handles edge case when start and end positions are the same', async () => {
+    // Mock Math.random to always return 0, making start and end positions the same
+    const originalRandom = Math.random
+    Math.random = jest.fn(() => 0)
+
+    try {
+      render(<CockatooAnimation {...defaultProps} isPlaying={true} />)
+
+      await waitFor(() => {
+        expect(mockPlay).toHaveBeenCalled()
+      })
+
+      // Should not throw error even with distance = 0
+      expect(mockPlay).toHaveBeenCalled()
+    } finally {
+      Math.random = originalRandom
+    }
+  })
 })
