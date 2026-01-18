@@ -1,10 +1,9 @@
 ---
 name: Feature request
 about: Request additional functionality or suggest improving one
-title: "[FEATURE]"
+title: '[FEATURE]'
 labels: ''
 assignees: ''
-
 ---
 
 **Is your feature request related to a problem? Please describe.**

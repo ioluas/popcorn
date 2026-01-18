@@ -37,6 +37,21 @@ jest.mock('@/i18n', () => ({
   applyRTL: (lang: string) => mockApplyRTL(lang),
 }))
 
+// Mock expo-updates
+let mockExpoUpdatesError = false
+jest.mock(
+  'expo-updates',
+  () => ({
+    reloadAsync: jest.fn().mockImplementation(() => {
+      if (mockExpoUpdatesError) {
+        throw new Error('Updates not available')
+      }
+      return Promise.resolve()
+    }),
+  }),
+  { virtual: true }
+)
+
 jest.mock('@/hooks/useVolume', () => ({
   useVolume: () => ({ volume: 1, setVolume: mockSetVolume, isLoading: false }),
 }))
@@ -112,6 +127,7 @@ describe('SettingsPage', () => {
     jest.clearAllMocks()
     mockI18n.language = 'en'
     mockNeedsRTLRestart.mockReturnValue(false)
+    mockExpoUpdatesError = false
   })
 
   describe('rendering', () => {
@@ -253,6 +269,38 @@ describe('SettingsPage', () => {
         expect(mockChangeLanguage).toHaveBeenCalledWith('ar')
         expect(mockApplyRTL).toHaveBeenCalledWith('ar')
       })
+    })
+
+    it('shows manual restart alert when expo-updates fails', async () => {
+      mockI18n.language = 'en'
+      mockNeedsRTLRestart.mockReturnValue(true)
+      mockExpoUpdatesError = true
+
+      // Mock __DEV__ to false to test the catch block
+      const originalDev = global.__DEV__
+
+      try {
+        global.__DEV__ = false
+
+        const { getByText, getByTestId } = render(<SettingsPage />)
+
+        fireEvent.press(getByText('العربية'))
+
+        await waitFor(() => {
+          expect(getByTestId('restart-modal')).toBeTruthy()
+        })
+
+        fireEvent.press(getByTestId('restart-confirm'))
+
+        await waitFor(() => {
+          expect(mockSaveLanguage).toHaveBeenCalledWith('ar')
+          expect(mockChangeLanguage).toHaveBeenCalledWith('ar')
+          expect(mockApplyRTL).toHaveBeenCalledWith('ar')
+        })
+      } finally {
+        // Restore __DEV__
+        global.__DEV__ = originalDev
+      }
     })
   })
 
